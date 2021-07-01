@@ -2,8 +2,6 @@ import './App.css';
 import Navbar from './components/navbar';
 import BucketView from './components/bucketView';
 import CalendarView from './components/calendarView';
-import { Button } from 'bootstrap';
-
 function App() {
   return (
     <div className="App">

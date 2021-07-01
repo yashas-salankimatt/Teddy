@@ -1,0 +1,21 @@
+.NavbarWrapper {
+    display: flex;
+    flex-direction: row;
+}
+
+.TeddyWrapper {
+    flex: 9;
+    align-items:baseline;
+}
+
+.TeddyHeader {
+    text-align: start;
+    margin-left: 1%;
+}
+
+.SignOutButton {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

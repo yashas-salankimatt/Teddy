@@ -1,12 +1,17 @@
-import React, { useState } from 'react';
+import React from 'react';
+import './navbar.css'
 
 function Navbar(props) {
-    const [title, setTitle] = useState('Teddy');
 
     return (
-        <div>
-            <h1>{title}</h1>
-        </div>
+        <div className="NavbarWrapper">
+            <div className="TeddyWrapper">
+                <h1 className="TeddyHeader">Teddy</h1>
+            </div>
+            <div className="SignOutButton">
+                <button type="button" class="btn btn-secondary">Sign Out</button>
+            </div>
+        </div >
     );
 }
 
