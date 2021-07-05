@@ -1,7 +1,12 @@
 import React from 'react';
-import './navbar.css'
+import './navbar.css';
+import { Link, Redirect } from 'react-router-dom';
 
 function Navbar(props) {
+
+    const onSignOut = () => {
+        console.log("Entered function");
+    };
 
     return (
         <div className="NavbarWrapper">
@@ -9,7 +14,7 @@ function Navbar(props) {
                 <h1 className="TeddyHeader">Teddy</h1>
             </div>
             <div className="SignOutButton">
-                <button type="button" class="btn btn-secondary">Sign Out</button>
+                <Link type="button" class="btn btn-secondary" onClick={onSignOut} to='/signin' >Sign Out</Link>
             </div>
         </div >
     );

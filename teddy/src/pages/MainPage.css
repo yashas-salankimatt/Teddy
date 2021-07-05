@@ -1,0 +1,22 @@
+.MainViewWrapper{
+    display: flex;
+    flex-direction: row;
+    height:90vh;
+  }
+  
+  .Buckets{
+    flex: 1;
+    background-color: gray;
+    height: 100%;
+  }
+  
+  .CalendarView{
+    flex: 1;
+    background-color: blue;
+    height: 100%;
+    width: 100;
+  }
+  
+  .Navbar{
+    height: 7vh;
+  }

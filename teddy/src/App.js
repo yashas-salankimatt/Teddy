@@ -1,22 +1,16 @@
 import './App.css';
-import Navbar from './components/navbar';
-import BucketView from './components/bucketView';
-import CalendarView from './components/calendarView';
+import MainPage from './pages/MainPage';
+import SignInPage from './pages/SignInPage';
+import {BrowserRouter as Router, Route} from 'react-router-dom'
+
 function App() {
   return (
-    <div className="App">
-      <div className="Navbar">
-        <Navbar></Navbar>
+    <Router>
+      <div className="App">
+        <Route path='/' exact component={MainPage}></Route>
+        <Route path='/signin' component={SignInPage}></Route>
       </div>
-      <div className="MainViewWrapper">
-        <div className="Buckets">
-          <BucketView></BucketView>
-        </div>
-        <div className="CalendarView">
-          <CalendarView></CalendarView>
-        </div>
-      </div>
-    </div>
+    </Router>
   );
 }
 
