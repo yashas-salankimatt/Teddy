@@ -4,7 +4,6 @@ import { useState } from 'react'
 import Button from './Button'
 import AddTask from './AddTask'
 import Tasks from './Tasks'
-
 function Project({project, onDelete}){
     const [tasks, setTasks] = useState([
         {
@@ -25,6 +24,9 @@ function Project({project, onDelete}){
     ])
 
     const [showAddTask, setShowAddTask] = useState(false)
+
+    const[projectIsOpen, setProjectIsOpen] = useState(false)
+    const toggleProject = () => setProjectIsOpen(!projectIsOpen)
 
     const addTask = (task) => {
         const id = Math.floor(Math.random() * 10000) + 1
@@ -50,9 +52,12 @@ function Project({project, onDelete}){
                 <Button color={showAddTask ? 'red' : 'green'} text={showAddTask ? 'Close' : 'Add'} 
                     onClick={() => setShowAddTask(!showAddTask)}/>
                 {showAddTask && <AddTask onAdd = {addTask}/>}
+                <Button color={projectIsOpen ? 'red' : 'green'} text={projectIsOpen ? 'Close Tasks' : 'Show Tasks'} 
+                    onClick={toggleProject}/>
                 {
-                    tasks.length>0 ? (<Tasks tasks = {tasks} onDelete={deleteTask}/>) : ('No tasks to show')
+                    projectIsOpen && (tasks.length>0 ? (<Tasks tasks = {tasks} onDelete={deleteTask}/>) : ('No tasks to show'))
                 }
+                
 
             </div>
         </li>

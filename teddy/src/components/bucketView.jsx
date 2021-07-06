@@ -3,6 +3,7 @@ import React from 'react'
 import Projects from './Projects'
 import Button from './Button'
 import AddProject from './AddProject'
+import BucketViewHeader from './BucketViewHeader'
 
 function BucketView(props) {
     const [projects, setProjects] = useState([
@@ -37,14 +38,17 @@ function BucketView(props) {
     }
 
     return (
+        
         <div className='bucketView'>
-            <h1 style={{ backgroundColor: "gray" }}>Bucket View</h1>
+            <BucketViewHeader/>
             <Button color={showAddProject ? 'red' : 'green'} text={showAddProject ? 'Close' : 'Add'} 
             onClick={() => setShowAddProject(!showAddProject)}/>
-            {showAddProject && <AddProject onAdd = {addProject}/>}
-            {
-              projects.length>0 ? (<Projects projects = {projects} onDelete={deleteProject}/>) : ('No projects to show')
-            }
+            <div className='bucketScroll'>
+                {showAddProject && <AddProject onAdd = {addProject}/>}
+                {
+                projects.length>0 ? (<Projects projects = {projects} onDelete={deleteProject}/>) : ('No projects to show')
+                }
+            </div>
 
         </div>
     );
