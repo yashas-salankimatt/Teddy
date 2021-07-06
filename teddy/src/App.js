@@ -1,7 +1,7 @@
 import './App.css';
-import Navbar from './components/navbar';
-import BucketView from './components/bucketView';
-import CalendarView from './components/calendarView';
+import Navbar from './components/Navbar';
+import BucketView from './components/BucketView';
+import CalendarView from './components/CalendarView';
 import { Button } from 'bootstrap';
 
 function App() {
