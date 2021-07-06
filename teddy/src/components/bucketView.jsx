@@ -43,7 +43,7 @@ function BucketView(props) {
             onClick={() => setShowAddProject(!showAddProject)}/>
             {showAddProject && <AddProject onAdd = {addProject}/>}
             {
-              projects.length>0 ? (<Projects projects = {projects} onDelete={deleteProject}/>) : ('No tasks to show')
+              projects.length>0 ? (<Projects projects = {projects} onDelete={deleteProject}/>) : ('No projects to show')
             }
 
         </div>
