@@ -1,16 +1,17 @@
 import './App.css';
 import MainPage from './pages/MainPage';
-import SignInPage from './pages/SignInPage';
 import {BrowserRouter as Router, Route} from 'react-router-dom'
+import UserProvider from './providers/UserProvider';
 
 function App() {
   return (
-    <Router>
-      <div className="App">
-        <Route path='/' exact component={MainPage}></Route>
-        <Route path='/signin' component={SignInPage}></Route>
-      </div>
-    </Router>
+    <UserProvider>
+      <Router>
+        <div className="App">
+          <Route path='/' exact component={MainPage}></Route>
+        </div>
+      </Router>
+    </UserProvider>
   );
 }
 
