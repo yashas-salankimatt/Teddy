@@ -1,8 +1,11 @@
 import { useState } from 'react'
+import DatePicker from "react-datepicker";
+
+import "react-datepicker/dist/react-datepicker.css";
 
 const EditTask = ({ onEdit, task }) => {
     const [name, setName] = useState(task.name)
-    const [minutes, setMinutes] = useState(task.minutes)
+    const [dueDate, setDueDate] = useState(task.dueDate)
 
     const onSubmit = (e) => {
         e.preventDefault()
@@ -12,12 +15,17 @@ const EditTask = ({ onEdit, task }) => {
             return
         }
 
+        if (!dueDate) {
+            alert('Please add a date')
+            return
+        }
+
         let id = task.id
 
-        onEdit( { id, name, minutes} )
+        onEdit( { id, name, dueDate} )
 
         setName('')
-        setMinutes('')
+        setDueDate(new Date())
     }
 
     return (
@@ -27,8 +35,13 @@ const EditTask = ({ onEdit, task }) => {
                 <input type='text' placeholder='Add Task Name' value={name} onChange={(e) => setName(e.target.value)}/>
             </div>
             <div className = 'form-control'>
-                <label>Task Time</label>
-                <input type='text' placeholder='Add Task Time Estimate in Minutes' value={minutes} onChange={(e) => setMinutes(e.target.value)}/>
+                <label>Task Due Date</label>
+                <DatePicker
+                    showTimeSelect
+                    selected={dueDate}
+                    onChange={(date) => setDueDate(date)}
+                    dateFormat="MMMM d, yyyy h:mm aa"
+                /> 
             </div>
 
             <input type='submit' value='Save Task' className='btn btn-block'/>

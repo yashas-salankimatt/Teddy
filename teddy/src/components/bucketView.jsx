@@ -10,17 +10,17 @@ function BucketView(props) {
         {
             id: '0',
             name: 'Bucket feature',
-            description: "Need to create a project-task structure for the buckets"
+            dueDate: new Date("8/20/2021")
         },
         {
             id: '1',
             name: 'Calendar feature',
-            description: "Need to have a customizable calendar"
+            dueDate: new Date("5/10/2021")
         },
         {
             id: '2',
             name: 'Drag and Drop feature',
-            description: "Need to have drag and drop functionality on top of automation"
+            dueDate: new Date("1/2/2021")
         },
     ])
 

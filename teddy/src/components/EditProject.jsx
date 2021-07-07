@@ -1,8 +1,12 @@
 import { useState } from 'react'
 
+import DatePicker from "react-datepicker";
+
+import "react-datepicker/dist/react-datepicker.css";
+
 const EditProject = ({ onEdit , project}) => {
     const [name, setName] = useState(project.name)
-    const [description, setDescription] = useState(project.description)
+    const [dueDate, setDueDate] = useState(project.dueDate)
 
     const onSubmit = (e) => {
         e.preventDefault()
@@ -12,12 +16,17 @@ const EditProject = ({ onEdit , project}) => {
             return
         }
 
+        if (!dueDate) {
+            alert('Please add a date')
+            return
+        }
+
         let id = project.id
         
-        onEdit( { id, name, description} )
+        onEdit( { id, name, dueDate} )
 
         setName('')
-        setDescription('')
+        setDueDate(new Date())
     }
 
     return (
@@ -27,8 +36,13 @@ const EditProject = ({ onEdit , project}) => {
                 <input type='text' placeholder='Add Project Name' value={name} onChange={(e) => setName(e.target.value)}/>
             </div>
             <div className = 'form-control'>
-                <label>Project Description</label>
-                <input type='text' placeholder='Add Project Description' value={description} onChange={(e) => setDescription(e.target.value)}/>
+                <label>Project Due Date</label>
+                <DatePicker
+                    showTimeSelect
+                    selected={dueDate}
+                    onChange={(date) => setDueDate(date)}
+                    dateFormat="MMMM d, yyyy h:mm aa"
+                /> 
             </div>
 
             <input type='submit' value='Save Task' className='btn btn-block'/>

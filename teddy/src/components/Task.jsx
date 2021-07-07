@@ -5,6 +5,7 @@ import Button from './Button'
 import Subtasks from './Subtasks'
 import AddSubtask from './AddSubtask'
 import EditTask from './EditTask'
+import moment from 'moment';
 
 function Task({task, onDelete, onEdit}){
     const [subtasks, setSubtasks] = useState([
@@ -61,7 +62,7 @@ function Task({task, onDelete, onEdit}){
                     <FaTimes style = {{color: 'red', cursor: 'pointer',}} onClick={() => onDelete(task.id)}/>
                 </h3>
                 <p>
-                    {task.minutes} minutes
+                    {moment(task.dueDate).format('MMMM d, yyyy - h:mm a')}
                 </p>
                 <Button color={showAddSubtask ? 'red' : 'green'} text={showAddSubtask ? 'Close' : 'Add'} 
                     onClick={() => setShowAddSubtask(!showAddSubtask)}/>

@@ -5,22 +5,24 @@ import Button from './Button'
 import AddTask from './AddTask'
 import Tasks from './Tasks'
 import EditProject from './EditProject'
+import moment from 'moment';
+
 function Project({project, onDelete, onEdit}){
     const [tasks, setTasks] = useState([
         {
             id: '0',
             name: 'First Part',
-            minutes: 30
+            dueDate: new Date("8/20/2021")
         },
         {
             id: '1',
             name: 'Second Part',
-            minutes: 40
+            dueDate: new Date("5/10/2021")
         },
         {
             id: '2',
             name: 'Third Part',
-            minutes: 50
+            dueDate: new Date("1/2/2021")
         },
     ])
     
@@ -61,7 +63,7 @@ function Project({project, onDelete, onEdit}){
                     <FaTimes style = {{color: 'red', cursor: 'pointer',}} onClick={() => onDelete(project.id)}/>
                 </h3>
                 <p>
-                    {project.description}
+                    {moment(project.dueDate).format('MMMM d, yyyy - h:mm a')}
                 </p>
                 <Button color={showAddTask ? 'red' : 'green'} text={showAddTask ? 'Close' : 'Add'} 
                     onClick={() => setShowAddTask(!showAddTask)}/>
