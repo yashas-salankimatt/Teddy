@@ -37,6 +37,16 @@ function BucketView(props) {
         setProjects(projects.filter((project) => project.id !== id))
     }
 
+    const editProject = (editProject) => {   
+        setProjects(projects.map(function(project) {
+            if (project.id !== editProject.id){
+                return project
+            } else {
+                return editProject
+            }
+        }, this))
+    }
+
     return (
         
         <div className='bucketView'>
@@ -46,7 +56,7 @@ function BucketView(props) {
             <div className='bucketScroll'>
                 {showAddProject && <AddProject onAdd = {addProject}/>}
                 {
-                projects.length>0 ? (<Projects projects = {projects} onDelete={deleteProject}/>) : ('No projects to show')
+                projects.length>0 ? (<Projects projects = {projects} onDelete={deleteProject} onEdit={editProject}/>) : ('No projects to show')
                 }
             </div>
 

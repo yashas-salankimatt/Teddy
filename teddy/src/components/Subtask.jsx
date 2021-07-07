@@ -1,8 +1,12 @@
 import React from 'react'
 import { FaTimes } from 'react-icons/fa'
 import { useState } from 'react'
+import EditSubtask from './EditSubtask'
+import Button from './Button'
 
-function Subtask({subtask, onDelete}){
+function Subtask({subtask, onDelete, onEdit}){
+
+    const [showEditSubtask, setShowEditSubtask] = useState(false)
 
     return (
         <li className='subtask'>
@@ -14,6 +18,9 @@ function Subtask({subtask, onDelete}){
                 <p>
                     {subtask.minutes} minutes
                 </p>
+                <Button color={showEditSubtask ? 'red' : 'green'} text={showEditSubtask ? 'Close' : 'Edit'} 
+                    onClick={() => setShowEditSubtask(!showEditSubtask)}/>
+                {showEditSubtask && <EditSubtask onEdit = {onEdit} subtask = {subtask}/>}
 
             </div>
         </li>

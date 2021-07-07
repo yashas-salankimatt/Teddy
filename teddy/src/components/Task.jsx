@@ -4,8 +4,9 @@ import { useState } from 'react'
 import Button from './Button'
 import Subtasks from './Subtasks'
 import AddSubtask from './AddSubtask'
+import EditTask from './EditTask'
 
-function Task({task, onDelete}){
+function Task({task, onDelete, onEdit}){
     const [subtasks, setSubtasks] = useState([
         {
             id: '0',
@@ -26,6 +27,8 @@ function Task({task, onDelete}){
 
     const [showAddSubtask, setShowAddSubtask] = useState(false)
 
+    const [showEditTask, setShowEditTask] = useState(false)
+
     const[taskIsOpen, setTaskIsOpen] = useState(false)
     const toggleTask = () => setTaskIsOpen(!taskIsOpen)
 
@@ -38,6 +41,16 @@ function Task({task, onDelete}){
 
     const deleteSubtask = (id) => {
         setSubtasks(subtasks.filter((subtask) => subtask.id !== id))
+    }
+
+    const editSubtask = (editSubtask) => {   
+        setSubtasks(subtasks.map(function(subtask) {
+            if (subtask.id !== editSubtask.id){
+                return subtask
+            } else {
+                return editSubtask
+            }
+        }, this))
     }
 
     return (
@@ -53,10 +66,15 @@ function Task({task, onDelete}){
                 <Button color={showAddSubtask ? 'red' : 'green'} text={showAddSubtask ? 'Close' : 'Add'} 
                     onClick={() => setShowAddSubtask(!showAddSubtask)}/>
                 {showAddSubtask && <AddSubtask onAdd = {addSubtask}/>}
+
+                <Button color={showEditTask ? 'red' : 'green'} text={showEditTask ? 'Close' : 'Edit'} 
+                    onClick={() => setShowEditTask(!showEditTask)}/>
+                {showEditTask && <EditTask onEdit = {onEdit} task = {task}/>}
+
                 <Button color={taskIsOpen ? 'red' : 'green'} text={taskIsOpen ? 'Close Subtasks' : 'Show Subtasks'} 
                     onClick={toggleTask}/>
                 {
-                    taskIsOpen && (subtasks.length>0 ? (<Subtasks subtasks = {subtasks} onDelete={deleteSubtask}/>) : ('No subtasks to show'))
+                    taskIsOpen && (subtasks.length>0 ? (<Subtasks subtasks = {subtasks} onDelete={deleteSubtask} onEdit={editSubtask}/>) : ('No subtasks to show'))
                 }
 
             </div>
