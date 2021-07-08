@@ -11,12 +11,24 @@ function Project({project, onDelete, onEdit, updateMinutes}){
     const [tasks, setTasks] = useState([])
     
 
-    const [showAddTask, setShowAddTask] = useState(false)
+    const [showAddTask, setShowAddTask] = useState(false);
 
-    const [showEditProject, setShowEditProject] = useState(false)
+    const [showEditProject, setShowEditProject] = useState(false);
 
-    const[projectIsOpen, setProjectIsOpen] = useState(false)
-    const toggleProject = () => setProjectIsOpen(!projectIsOpen)
+    const[projectIsOpen, setProjectIsOpen] = useState(false);
+    const toggleProject = () => setProjectIsOpen(!projectIsOpen);
+
+    const [projectDone, setProjectDone] = useState({ labelChecked: false });
+    const labelRef = React.createRef();
+
+    const handleCheck = e => {
+        if (projectDone.labelChecked === false) {
+          labelRef.current.style.textDecoration = "line-through";
+        } else {
+          labelRef.current.style.textDecoration = "none";
+        }
+        setProjectDone({ labelChecked: !projectDone.labelChecked });
+    }
 
     const addTask = (task) => {
         const id = Math.floor(Math.random() * 10000) + 1
@@ -67,7 +79,8 @@ function Project({project, onDelete, onEdit, updateMinutes}){
     return (
         <li className='project'>
             <div>
-                <h3>
+                <h3 ref={labelRef}>
+                    <input type='checkbox' onClick={handleCheck}/>
                     {project.name}
                     <FaTimes style = {{color: 'red', cursor: 'pointer',}} onClick={() => onDelete(project.id)}/>
                 </h3>

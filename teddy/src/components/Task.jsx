@@ -17,6 +17,18 @@ function Task({task, onDelete, onEdit, updateMinutes}){
     const[taskIsOpen, setTaskIsOpen] = useState(false)
     const toggleTask = () => setTaskIsOpen(!taskIsOpen)
 
+    const [taskDone, setTaskDone] = useState({ labelChecked: false });
+    const labelRef = React.createRef();
+
+    const handleCheck = e => {
+        if (taskDone.labelChecked === false) {
+          labelRef.current.style.textDecoration = "line-through";
+        } else {
+          labelRef.current.style.textDecoration = "none";
+        }
+        setTaskDone({ labelChecked: !taskDone.labelChecked });
+    }
+
     const addSubtask = (subtask) => {
         console.log(task.id)
         let id = Math.floor(Math.random() * 10000) + 1
@@ -60,7 +72,8 @@ function Task({task, onDelete, onEdit, updateMinutes}){
     return (
         <li className='task'>
             <div>
-                <h3>
+                <h3 ref={labelRef}>
+                    <input type='checkbox' onClick={handleCheck}/>
                     {task.name}
                     <FaTimes style = {{color: 'red', cursor: 'pointer',}} onClick={() => onDelete(task.id)}/>
                 </h3>

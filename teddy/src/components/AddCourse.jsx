@@ -24,7 +24,7 @@ const AddCourse = ({ onAdd }) => {
                 <input type='text' placeholder='Add Course Name' value={name} onChange={(e) => setName(e.target.value)}/>
             </div>
 
-            <input type='submit' value='Save Task' className='btn btn-block'/>
+            <input type='submit' value='Save Course' className='btn btn-block'/>
         </form>
     )
 }
