@@ -39,10 +39,10 @@ export const createCategory = ({categoryName, archived=false, defaultCat=false})
             completed: true,
             // dueDate: fb.firestore.Timestamp.fromDate(new Date('July 23, 2021')),
             dueDate: null,
-            catID: categoriesRef.id,
+            catDoc: categoriesRef,
             defaultProj:true
         });
-        return categoriesRef.id;
+        return categoriesRef;
     } catch(error) {
         console.log("Error in trying to create category");
         console.log(error);
@@ -50,12 +50,10 @@ export const createCategory = ({categoryName, archived=false, defaultCat=false})
     return null;
 };
 
-export const createProject = ({projectName, dueDate, catID, description=null, completed=false, defaultProj=false}) => {
+export const createProject = ({projectName, dueDate, catDoc, description=null, completed=false, defaultProj=false}) => {
     const user = auth.currentUser;
     try{
-        const userRef = firestore.collection("users").doc(user.uid);
-        const categoriesRef = userRef.collection("todo").doc(catID);
-        const projectsRef = categoriesRef.collection("projects").doc();
+        const projectsRef = catDoc.collection("projects").doc();
         projectsRef.set({
             projectName, completed, defaultProj, dueDate, description
         });
@@ -65,11 +63,10 @@ export const createProject = ({projectName, dueDate, catID, description=null, co
             completed: true,
             // dueDate: fb.firestore.Timestamp.fromDate(new Date('July 22, 2021')),
             dueDate: null,
-            catID: catID,
-            projID: projectsRef.id,
+            projDoc: projectsRef,
             defaultTask:true
         });
-        return projectsRef.id;
+        return projectsRef;
     } catch(error) {
         console.log("Error in trying to create project");
         console.log(error);
@@ -77,13 +74,10 @@ export const createProject = ({projectName, dueDate, catID, description=null, co
     return null;
 };
 
-export const createTask = ({taskName, dueDate, catID, projID, description=null, completed=false, defaultTask=false}) => {
+export const createTask = ({taskName, dueDate, projDoc, description=null, completed=false, defaultTask=false}) => {
     const user = auth.currentUser;
     try{
-        const userRef = firestore.collection("users").doc(user.uid);
-        const categoriesRef = userRef.collection("todo").doc(catID);
-        const projectsRef = categoriesRef.collection("projects").doc(projID);
-        const tasksRef = projectsRef.collection("tasks").doc();
+        const tasksRef = projDoc.collection("tasks").doc();
         tasksRef.set({
             taskName, completed, defaultTask, dueDate, description
         });
@@ -93,11 +87,9 @@ export const createTask = ({taskName, dueDate, catID, projID, description=null, 
             completed: true,
             minutesNeeded: 0,
             defaultSubtask: true,
-            catID: catID,
-            projID: projID,
-            taskID: tasksRef.id
+            taskDoc: tasksRef
         });
-        return tasksRef.id;
+        return tasksRef;
     } catch(error) {
         console.log("Error in trying to create task");
         console.log(error);
@@ -105,19 +97,15 @@ export const createTask = ({taskName, dueDate, catID, projID, description=null, 
     return null;
 };
 
-export const createSubtask = ({subtaskName, minutesNeeded, catID=null, projID=null, taskID=null, description=null, completed=false, defaultSubtask=false}) => {
+export const createSubtask = ({subtaskName, minutesNeeded, taskDoc, description=null, completed=false, defaultSubtask=false}) => {
     const user = auth.currentUser;
     try{
-        const userRef = firestore.collection("users").doc(user.uid);
-        const categoriesRef = userRef.collection("todo").doc(catID);
-        const projectsRef = categoriesRef.collection("projects").doc(projID);
-        const tasksRef = projectsRef.collection("tasks").doc(taskID);
-        const subtasksRef = tasksRef.collection("subtasks").doc();
+        const subtasksRef = taskDoc.collection("subtasks").doc();
         subtasksRef.set({
             subtaskName, completed, defaultSubtask, minutesNeeded, description
         });
         // console.log(subtasksRef.id);
-        return subtasksRef.id;
+        return subtasksRef;
     } catch(error) {
         console.log("Error in trying to create subtask");
         console.log(error);
@@ -227,19 +215,21 @@ export const getSubtaskDoc = async ({catDoc=null, categoryName=null, projDoc=nul
     try{
         const snapshot = await taskDoc.collection("subtasks").where('subtaskName', '==', subtaskName).get();
         if (snapshot.empty) {
-            console.log('No matching tasks');
+            console.log('No matching subtasks');
             return null;
         }
         if (snapshot.size > 1){
-            console.log('More than one task of this name');
+            console.log('More than one subtask of this name');
             return null;
         }
         const retRef = await snapshot.docs[0].ref;
         console.log(retRef.id);
         return retRef;
     } catch(error) {
-        console.log("Error in trying to get task ID");
+        console.log("Error in trying to get subtask ID");
         console.log(error);
     }
     return null;
 };
+
+// ============================== update functions ===============================
