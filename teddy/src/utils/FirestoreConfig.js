@@ -140,9 +140,9 @@ export const getCatDoc = async ({categoryName}) => {
             console.log('More than one category of this name');
             return null;
         }
-        const retID = await snapshot.docs[0].ref;
-        console.log(retID.id);
-        return retID;
+        const retRef = await snapshot.docs[0].ref;
+        console.log(retRef.id);
+        return retRef;
     } catch(error) {
         console.log("Error in trying to get category ID");
         console.log(error);
@@ -151,16 +151,12 @@ export const getCatDoc = async ({categoryName}) => {
 };
 
 export const getProjDoc = async ({catDoc=null, categoryName=null, projectName}) => {
-    console.log(projectName, catDoc);
-    const user = auth.currentUser;
     if (categoryName && !catDoc){
         catDoc = await getCatDoc({categoryName});
     }
     catDoc = await catDoc;
-    console.log(projectName, catDoc.id);
 
     try{
-        console.log(projectName, catDoc);
         // const userRef = firestore.collection("users").doc(user.uid);
         const snapshot = await catDoc.collection("projects").where('projectName', '==', projectName).get();
         if (snapshot.empty) {
@@ -171,9 +167,9 @@ export const getProjDoc = async ({catDoc=null, categoryName=null, projectName}) 
             console.log('More than one project of this name');
             return null;
         }
-        const retID = snapshot.docs[0];
-        console.log(retID.id);
-        return retID;
+        const retRef = await snapshot.docs[0].ref;
+        console.log(retRef.id);
+        return retRef;
     } catch(error) {
         console.log("Error in trying to get project ID");
         console.log(error);
@@ -181,22 +177,19 @@ export const getProjDoc = async ({catDoc=null, categoryName=null, projectName}) 
     return null;
 };
 
-export const getTaskDoc = async ({catID=null, categoryName=null, projID=null, projectName=null, taskName}) => {
-    const user = auth.currentUser;
-    if (categoryName && !catID){
-        catID = await getCatDoc({categoryName});
+export const getTaskDoc = async ({catDoc=null, categoryName=null, projDoc=null, projectName=null, taskName}) => {
+    if (categoryName && !catDoc){
+        catDoc = await getCatDoc({categoryName});
     }
-    catID = await catID.id;
+    catDoc = await catDoc;
 
-    if (projectName && !projID){
-        console.log(catID);
-        projID = await getProjDoc({catID: catID, projectName});
+    if (projectName && !projDoc){
+        projDoc = await getProjDoc({catDoc, projectName});
     }
-    projID = await projID.id;
+    projDoc = await projDoc;
 
     try{
-        const userRef = firestore.collection("users").doc(user.uid);
-        const snapshot = await userRef.collection("todo").doc(catID).collection("projects").doc(projID).collection("tasks").where('taskName', '==', taskName).get();
+        const snapshot = await projDoc.collection("tasks").where('taskName', '==', taskName).get();
         if (snapshot.empty) {
             console.log('No matching tasks');
             return null;
@@ -205,9 +198,9 @@ export const getTaskDoc = async ({catID=null, categoryName=null, projID=null, pr
             console.log('More than one task of this name');
             return null;
         }
-        const retID = snapshot.docs[0];
-        console.log(retID.id);
-        return retID;
+        const retRef = await snapshot.docs[0].ref;
+        console.log(retRef.id);
+        return retRef;
     } catch(error) {
         console.log("Error in trying to get task ID");
         console.log(error);
@@ -215,26 +208,24 @@ export const getTaskDoc = async ({catID=null, categoryName=null, projID=null, pr
     return null;
 };
 
-export const getSubtaskDoc = async ({catID=null, categoryName=null, projID=null, projectName=null, taskID=null, taskName=null, subtaskName}) => {
-    const user = auth.currentUser;
-    if (categoryName && !catID){
-        catID = await getCatDoc({categoryName});
+export const getSubtaskDoc = async ({catDoc=null, categoryName=null, projDoc=null, projectName=null, taskDoc=null, taskName=null, subtaskName}) => {
+    if (categoryName && !catDoc){
+        catDoc = await getCatDoc({categoryName});
     }
-    catID = await catID.id;
+    catDoc = await catDoc;
 
-    if (projectName && !projID){
-        projID = await getProjDoc({catID, projectName});
+    if (projectName && !projDoc){
+        projDoc = await getProjDoc({catDoc, projectName});
     }
-    projID = await projID.id;
+    projDoc = await projDoc;
 
-    if (taskName && !taskID){
-        taskID = await getTaskDoc({catID, projID, taskName});
+    if (taskName && !taskDoc){
+        taskDoc = await getTaskDoc({catDoc, projDoc, taskName});
     }
-    taskID = await taskID.id;
+    taskDoc = await taskDoc;
 
     try{
-        const userRef = firestore.collection("users").doc(user.uid);
-        const snapshot = await userRef.collection("todo").doc(catID).collection("projects").doc(projID).collection("tasks").doc(taskID).collection("subtasks").where('subtaskName', '==', subtaskName).get();
+        const snapshot = await taskDoc.collection("subtasks").where('subtaskName', '==', subtaskName).get();
         if (snapshot.empty) {
             console.log('No matching tasks');
             return null;
@@ -243,9 +234,9 @@ export const getSubtaskDoc = async ({catID=null, categoryName=null, projID=null,
             console.log('More than one task of this name');
             return null;
         }
-        const retID = snapshot.docs[0];
-        console.log(retID.id);
-        return retID;
+        const retRef = await snapshot.docs[0].ref;
+        console.log(retRef.id);
+        return retRef;
     } catch(error) {
         console.log("Error in trying to get task ID");
         console.log(error);

@@ -16,7 +16,7 @@ function ProfilePanel (props) {
                 </div>
                 <div>
                     <button
-                        onClick={() => getProjDoc({
+                        onClick={() => getSubtaskDoc({
                             categoryName: "defaultCat",
                             projectName: "defaultProj",
                             taskName: "defaultTask",
