@@ -1,22 +1,9 @@
 import React, { useState, useContext } from 'react';
 import './ProfilePanel.css';
 import { UserContext } from '../providers/UserProvider';
-import { firestore, signInWithGoogle, signOutWithGoogle } from "../utils/FirebaseConfig";
+import { fb, firestore, signInWithGoogle, signOutWithGoogle } from "../utils/FirebaseConfig";
 
-const testFunc = (user) => {
-    if (user !== null) {
-        const docLoc = "users/" + user.uid;
-        const userRef = firestore.doc(docLoc);
-        const { displayName, uid } = user;
-        try {
-            userRef.set({ displayName, uid });
-            console.log("testLog");
-        } catch (error) {
-            console.error("error creating doc");
-        }
 
-    }
-};
 
 function ProfilePanel(props) {
     const user = useContext(UserContext);
@@ -27,15 +14,15 @@ function ProfilePanel(props) {
                 <div>
                     <h4 className="GeneralButton">{user.displayName}</h4>
                 </div>
-                <div>
+                {/* <div>
                     <button
-                        onClick={() => testFunc(user)}
+                        onClick={() => createDoc(user)}
                         type="button"
                         className="GeneralButton btn btn-secondary"
                     >
                         Create doc for user
                     </button>
-                </div>
+                </div> */}
                 <div>
                     <button
                         onClick={signOutWithGoogle}
