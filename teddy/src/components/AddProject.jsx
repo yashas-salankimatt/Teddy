@@ -21,10 +21,12 @@ const AddProject = ({ onAdd }) => {
             return
         }
 
-        onAdd( {name, dueDate} )
+        let minutes = 0;
+
+        onAdd( {name, dueDate, minutes} )
 
         setName('')
-        setDueDate('')
+        setDueDate(new Date())
     }
 
     return (

@@ -59,7 +59,7 @@ function Task({task, onDelete, onEdit, updateMinutes}){
 
     return (
         <li className='task'>
-            <div className='task'>
+            <div>
                 <h3>
                     {task.name}
                     <FaTimes style = {{color: 'red', cursor: 'pointer',}} onClick={() => onDelete(task.id)}/>
@@ -70,7 +70,7 @@ function Task({task, onDelete, onEdit, updateMinutes}){
                 <p>
                     Total Task Time: {task.minutes} minutes
                 </p>
-                <Button color={showAddSubtask ? 'red' : 'green'} text={showAddSubtask ? 'Close' : 'Add'} 
+                <Button color={showAddSubtask ? 'red' : 'green'} text={showAddSubtask ? 'Close' : 'Add Subtask'} 
                     onClick={() => setShowAddSubtask(!showAddSubtask)}/>
                 {showAddSubtask && <AddSubtask onAdd = {addSubtask}/>}
 

@@ -10,7 +10,7 @@ function Subtask({subtask, onDelete, onEdit}){
 
     return (
         <li className='subtask'>
-            <div className='subtask'>
+            <div>
                 <h3>
                     {subtask.name}
                     <FaTimes style = {{color: 'red', cursor: 'pointer',}} onClick={() => onDelete(subtask.id)}/>

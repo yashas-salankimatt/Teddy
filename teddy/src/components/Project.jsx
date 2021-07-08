@@ -8,26 +8,7 @@ import EditProject from './EditProject'
 import moment from 'moment';
 
 function Project({project, onDelete, onEdit, updateMinutes}){
-    const [tasks, setTasks] = useState([
-        {
-            id: '0',
-            name: 'First Part',
-            dueDate: new Date("8/20/2021"),
-            minutes: 0,
-        },
-        {
-            id: '1',
-            name: 'Second Part',
-            dueDate: new Date("5/10/2021"),
-            minutes: 0,
-        },
-        {
-            id: '2',
-            name: 'Third Part',
-            dueDate: new Date("1/2/2021"),
-            minutes: 0,
-        },
-    ])
+    const [tasks, setTasks] = useState([])
     
 
     const [showAddTask, setShowAddTask] = useState(false)
@@ -85,7 +66,7 @@ function Project({project, onDelete, onEdit, updateMinutes}){
 
     return (
         <li className='project'>
-            <div className='project'>
+            <div>
                 <h3>
                     {project.name}
                     <FaTimes style = {{color: 'red', cursor: 'pointer',}} onClick={() => onDelete(project.id)}/>
@@ -96,7 +77,7 @@ function Project({project, onDelete, onEdit, updateMinutes}){
                 <p>
                     Total Project Time: {project.minutes} minutes
                 </p>
-                <Button color={showAddTask ? 'red' : 'green'} text={showAddTask ? 'Close' : 'Add'} 
+                <Button color={showAddTask ? 'red' : 'green'} text={showAddTask ? 'Close' : 'Add Task'} 
                     onClick={() => setShowAddTask(!showAddTask)}/>
                 {showAddTask && <AddTask onAdd = {addTask}/>}
 

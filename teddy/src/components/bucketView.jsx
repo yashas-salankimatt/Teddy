@@ -1,63 +1,32 @@
 import { useState } from 'react'
 import React from 'react'
-import Projects from './Projects'
+import Courses from './Courses'
 import Button from './Button'
-import AddProject from './AddProject'
+import AddCourse from './AddCourse'
 import BucketViewHeader from './BucketViewHeader'
 
 function BucketView(props) {
-    const [projects, setProjects] = useState([
-        {
-            id: '0',
-            name: 'Bucket feature',
-            dueDate: new Date("8/20/2021"),
-            minutes: 0,
-        },
-        {
-            id: '1',
-            name: 'Calendar feature',
-            dueDate: new Date("5/10/2021"),
-            minutes: 0,
-        },
-        {
-            id: '2',
-            name: 'Drag and Drop feature',
-            dueDate: new Date("1/2/2021"),
-            minutes: 0,
-        },
-    ])
+    const [courses, setCourses] = useState([])
 
-    const [showAddProject, setShowAddProject] = useState(false)
+    const [showAddCourse, setShowAddCourse] = useState(false)
 
-    const addProject = (project) => {
+    const addCourse = (course) => {
         const id = Math.floor(Math.random() * 10000) + 1
         console.log(id)
-        const newProject = {id, ...project}
-        setProjects([...projects, newProject])
+        const newCourse = {id, ...course}
+        setCourses([...courses, newCourse])
     }
 
-    const deleteProject = (id) => {
-        setProjects(projects.filter((project) => project.id !== id))
+    const deleteCourse = (id) => {
+        setCourses(courses.filter((course) => course.id !== id))
     }
 
-    const editProject = (editProject) => {   
-        setProjects(projects.map(function(project) {
-            if (project.id !== editProject.id){
-                return project
+    const editCourse = (editCourse) => {   
+        setCourses(courses.map(function(course) {
+            if (course.id !== editCourse.id){
+                return course
             } else {
-                return editProject
-            }
-        }, this))
-    }
-
-    const updateProjectMinutes = (newProject) => {
-        setProjects(projects.map(function(project) {
-            if (project.id !== newProject.id){
-                console.log('here')
-                return project
-            } else {
-                console.log(newProject.minutes)
-                return newProject
+                return editCourse
             }
         }, this))
     }
@@ -66,12 +35,12 @@ function BucketView(props) {
         
         <div className='bucketView'>
             <BucketViewHeader/>
-            <Button color={showAddProject ? 'red' : 'green'} text={showAddProject ? 'Close' : 'Add'} 
-            onClick={() => setShowAddProject(!showAddProject)}/>
+            <Button color={showAddCourse ? 'red' : 'green'} text={showAddCourse ? 'Close' : 'Add Course'} 
+            onClick={() => setShowAddCourse(!showAddCourse)}/>
             <div className='bucketScroll'>
-                {showAddProject && <AddProject onAdd = {addProject}/>}
+                {showAddCourse && <AddCourse onAdd = {addCourse}/>}
                 {
-                projects.length>0 ? (<Projects projects = {projects} onDelete={deleteProject} onEdit={editProject} updateMinutes={updateProjectMinutes}/>) : ('No projects to show')
+                courses.length>0 ? (<Courses courses = {courses} onDelete={deleteCourse} onEdit={editCourse} />) : ('Add a course to get started!')
                 }
             </div>
 
