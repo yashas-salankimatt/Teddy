@@ -1,32 +1,32 @@
 import { useState } from 'react'
 import React from 'react'
-import Courses from './Courses'
+import Categories from './Categories'
 import Button from './Button'
-import AddCourse from './AddCourse'
+import AddCategory from './AddCategory'
 import BucketViewHeader from './BucketViewHeader'
 
 function BucketView(props) {
-    const [courses, setCourses] = useState([])
+    const [categories, setCategories] = useState([])
 
-    const [showAddCourse, setShowAddCourse] = useState(false)
+    const [showAddCategory, setShowAddCategory] = useState(false)
 
-    const addCourse = (course) => {
+    const addCategory = (category) => {
         const id = Math.floor(Math.random() * 10000) + 1
         console.log(id)
-        const newCourse = {id, ...course}
-        setCourses([...courses, newCourse])
+        const newCategory = {id, ...category}
+        setCategories([...categories, newCategory])
     }
 
-    const deleteCourse = (id) => {
-        setCourses(courses.filter((course) => course.id !== id))
+    const deleteCategory = (id) => {
+        setCategories(categories.filter((category) => category.id !== id))
     }
 
-    const editCourse = (editCourse) => {   
-        setCourses(courses.map(function(course) {
-            if (course.id !== editCourse.id){
-                return course
+    const editCategory = (editCategory) => {   
+        setCategories(categories.map(function(category) {
+            if (category.id !== editCategory.id){
+                return category
             } else {
-                return editCourse
+                return editCategory
             }
         }, this))
     }
@@ -35,12 +35,12 @@ function BucketView(props) {
         
         <div className='bucketView'>
             <BucketViewHeader/>
-            <Button color={showAddCourse ? 'red' : 'green'} text={showAddCourse ? 'Close' : 'Add Course'} 
-            onClick={() => setShowAddCourse(!showAddCourse)}/>
+            <Button color={showAddCategory ? 'red' : 'green'} text={showAddCategory ? 'Close' : 'Add Category'} 
+            onClick={() => setShowAddCategory(!showAddCategory)}/>
             <div className='bucketScroll'>
-                {showAddCourse && <AddCourse onAdd = {addCourse}/>}
+                {showAddCategory && <AddCategory onAdd = {addCategory}/>}
                 {
-                courses.length>0 ? (<Courses courses = {courses} onDelete={deleteCourse} onEdit={editCourse} />) : ('Add a course to get started!')
+                categories.length>0 ? (<Categories categories = {categories} onDelete={deleteCategory} onEdit={editCategory} />) : ('Add a category to get started!')
                 }
             </div>
 

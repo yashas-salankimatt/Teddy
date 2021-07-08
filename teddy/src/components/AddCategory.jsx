@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-const AddCourse = ({ onAdd }) => {
+const AddCategory = ({ onAdd }) => {
     const [name, setName] = useState('')
 
 
@@ -20,13 +20,13 @@ const AddCourse = ({ onAdd }) => {
     return (
         <form className = 'add-form' onSubmit={onSubmit}>
             <div className = 'form-control'>
-                <label>Course Name</label>
-                <input type='text' placeholder='Add Course Name' value={name} onChange={(e) => setName(e.target.value)}/>
+                <label>Category Name</label>
+                <input type='text' placeholder='Add Category Name' value={name} onChange={(e) => setName(e.target.value)}/>
             </div>
 
-            <input type='submit' value='Save Course' className='btn btn-block'/>
+            <input type='submit' value='Save Category' className='btn btn-block'/>
         </form>
     )
 }
 
-export default AddCourse
+export default AddCategory

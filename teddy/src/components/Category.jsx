@@ -4,16 +4,16 @@ import React from 'react'
 import Projects from './Projects'
 import Button from './Button'
 import AddProject from './AddProject'
-import EditCourse from './EditCourse'
+import EditCategory from './EditCategory'
 
-function Course({course, onDelete, onEdit}) {
+function Category({category, onDelete, onEdit}) {
     const [projects, setProjects] = useState([])
 
     const [showAddProject, setShowAddProject] = useState(false)
-    const [showEditCourse, setShowEditCourse] = useState(false)
+    const [showEditCategory, setShowEditCategory] = useState(false)
 
-    const[courseIsOpen, setCourseIsOpen] = useState(false)
-    const toggleCourse = () => setCourseIsOpen(!courseIsOpen)
+    const[categoryIsOpen, setCategoryIsOpen] = useState(false)
+    const toggleCategory = () => setCategoryIsOpen(!categoryIsOpen)
 
     const addProject = (project) => {
         const id = Math.floor(Math.random() * 10000) + 1
@@ -51,24 +51,24 @@ function Course({course, onDelete, onEdit}) {
     return (
         
         <li>
-            <div className='course'>
+            <div className='category'>
                 <h3>
-                    {course.name}
-                    <FaTimes style = {{color: 'red', cursor: 'pointer',}} onClick={() => onDelete(course.id)}/>
+                    {category.name}
+                    <FaTimes style = {{color: 'red', cursor: 'pointer',}} onClick={() => onDelete(category.id)}/>
                 </h3>
 
                 <Button color={showAddProject ? 'red' : 'green'} text={showAddProject ? 'Close' : 'Add Project'} 
                 onClick={() => setShowAddProject(!showAddProject)}/>
                 {showAddProject && <AddProject onAdd = {addProject}/>}
 
-                <Button color={showEditCourse ? 'red' : 'green'} text={showEditCourse ? 'Close' : 'Edit'} 
-                    onClick={() => setShowEditCourse(!showEditCourse)}/>
-                {showEditCourse && <EditCourse onEdit = {onEdit} course = {course}/>}
+                <Button color={showEditCategory ? 'red' : 'green'} text={showEditCategory ? 'Close' : 'Edit'} 
+                    onClick={() => setShowEditCategory(!showEditCategory)}/>
+                {showEditCategory && <EditCategory onEdit = {onEdit} category = {category}/>}
 
-                <Button color={courseIsOpen ? 'red' : 'green'} text={courseIsOpen ? 'Close Projects' : 'Show Projects'} 
-                    onClick={toggleCourse}/>
+                <Button color={categoryIsOpen ? 'red' : 'green'} text={categoryIsOpen ? 'Close Projects' : 'Show Projects'} 
+                    onClick={toggleCategory}/>
                 {
-                    courseIsOpen && (projects.length>0 ? (<Projects projects = {projects} onDelete={deleteProject} onEdit={editProject} updateMinutes={updateProjectMinutes}/>) : ('No projects to show'))
+                    categoryIsOpen && (projects.length>0 ? (<Projects projects = {projects} onDelete={deleteProject} onEdit={editProject} updateMinutes={updateProjectMinutes}/>) : ('No projects to show'))
                 }
             </div>
 
@@ -76,5 +76,5 @@ function Course({course, onDelete, onEdit}) {
     );
 }
 
-export default Course
+export default Category
 

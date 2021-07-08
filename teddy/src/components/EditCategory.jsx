@@ -1,7 +1,7 @@
 import { useState } from 'react'
 
-const EditCourse = ({ onEdit , course}) => {
-    const [name, setName] = useState(course.name)
+const EditCategory = ({ onEdit , category}) => {
+    const [name, setName] = useState(category.name)
 
     const onSubmit = (e) => {
         e.preventDefault()
@@ -11,7 +11,7 @@ const EditCourse = ({ onEdit , course}) => {
             return
         }
 
-        let id = course.id
+        let id = category.id
         
         onEdit( { id, name} )
 
@@ -21,8 +21,8 @@ const EditCourse = ({ onEdit , course}) => {
     return (
         <form className = 'add-form' onSubmit={onSubmit}>
             <div className = 'form-control'>
-                <label>Course Name</label>
-                <input type='text' placeholder='Add Course Name' value={name} onChange={(e) => setName(e.target.value)}/>
+                <label>Category Name</label>
+                <input type='text' placeholder='Add Category Name' value={name} onChange={(e) => setName(e.target.value)}/>
             </div>
 
             <input type='submit' value='Save Task' className='btn btn-block'/>
@@ -30,4 +30,4 @@ const EditCourse = ({ onEdit , course}) => {
     )
 }
 
-export default EditCourse
+export default EditCategory
