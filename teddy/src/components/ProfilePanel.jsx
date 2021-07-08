@@ -1,11 +1,11 @@
-import React, { useState, useContext } from 'react';
+import React, { useContext } from 'react';
 import './ProfilePanel.css';
 import { UserContext } from '../providers/UserProvider';
-import { fb, firestore, signInWithGoogle, signOutWithGoogle } from "../utils/FirebaseConfig";
+import { signInWithGoogle, signOutWithGoogle } from "../utils/FirebaseConfig";
+import {createCategory, getSubtaskDoc, getCatDoc, getProjDoc, getTaskDoc} from "../utils/FirestoreConfig";
 
 
-
-function ProfilePanel(props) {
+function ProfilePanel (props) {
     const user = useContext(UserContext);
 
     if (user !== null) {
@@ -14,15 +14,20 @@ function ProfilePanel(props) {
                 <div>
                     <h4 className="GeneralButton">{user.displayName}</h4>
                 </div>
-                {/* <div>
+                <div>
                     <button
-                        onClick={() => createDoc(user)}
+                        onClick={() => getProjDoc({
+                            categoryName: "defaultCat",
+                            projectName: "defaultProj",
+                            taskName: "defaultTask",
+                            subtaskName: "defaultSubtask"
+                        })}
                         type="button"
                         className="GeneralButton btn btn-secondary"
                     >
-                        Create doc for user
+                        Get ID
                     </button>
-                </div> */}
+                </div>
                 <div>
                     <button
                         onClick={signOutWithGoogle}
