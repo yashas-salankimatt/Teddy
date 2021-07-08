@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import './ProfilePanel.css';
 import { UserContext } from '../providers/UserProvider';
 import { signInWithGoogle, signOutWithGoogle } from "../utils/FirebaseConfig";
-import {createCategory, getSubtaskDoc, getCatDoc, getProjDoc, getTaskDoc} from "../utils/FirestoreConfig";
+import {createCategory, getSubtaskDoc, getCatDoc, getProjDoc, getTaskDoc, createSubtask} from "../utils/FirestoreConfig";
 
 
 function ProfilePanel (props) {
@@ -16,16 +16,17 @@ function ProfilePanel (props) {
                 </div>
                 <div>
                     <button
-                        onClick={() => getSubtaskDoc({
-                            categoryName: "defaultCat",
-                            projectName: "defaultProj",
-                            taskName: "defaultTask",
-                            subtaskName: "defaultSubtask"
-                        })}
+                        onClick={async () => {
+                            // const doc = getTaskDoc({categoryName: "catTest", projectName: "defaultProj", taskName: "TestTask"});
+                            // const doc = getTaskDoc({categoryID: "O6YY67zvqLii8gPTlZNX", projectID: "I5MqgqHeXuwmM4chmO1f", taskID: "LHyaf6MF2slWOSYR2uHv"});
+                            const catDoc = createCategory({categoryName: "new category"});
+                            const doc = getTaskDoc({catDoc, projectName: "defaultProj", taskName: "defaultTask"});
+                            createSubtask({subtaskName: "TestSUbTask6", minutesNeeded: 700, taskDoc: doc});
+                        }}
                         type="button"
                         className="GeneralButton btn btn-secondary"
                     >
-                        Get ID
+                        Create thing
                     </button>
                 </div>
                 <div>

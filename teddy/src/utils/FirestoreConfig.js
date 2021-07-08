@@ -33,7 +33,7 @@ export const createCategory = ({categoryName, archived=false, defaultCat=false})
         categoriesRef.set({
             categoryName, archived, defaultCat
         });
-        // console.log(categoriesRef.id);
+        console.log(categoriesRef.id);
         createProject({
             projectName:"defaultProj", 
             completed: true,
@@ -50,8 +50,8 @@ export const createCategory = ({categoryName, archived=false, defaultCat=false})
     return null;
 };
 
-export const createProject = ({projectName, dueDate, catDoc, description=null, completed=false, defaultProj=false}) => {
-    const user = auth.currentUser;
+export const createProject = async ({projectName, dueDate, catDoc, description=null, completed=false, defaultProj=false}) => {
+    catDoc = await catDoc;
     try{
         const projectsRef = catDoc.collection("projects").doc();
         projectsRef.set({
@@ -74,8 +74,8 @@ export const createProject = ({projectName, dueDate, catDoc, description=null, c
     return null;
 };
 
-export const createTask = ({taskName, dueDate, projDoc, description=null, completed=false, defaultTask=false}) => {
-    const user = auth.currentUser;
+export const createTask = async ({taskName, dueDate, projDoc, description=null, completed=false, defaultTask=false}) => {
+    projDoc = await projDoc;
     try{
         const tasksRef = projDoc.collection("tasks").doc();
         tasksRef.set({
@@ -97,8 +97,8 @@ export const createTask = ({taskName, dueDate, projDoc, description=null, comple
     return null;
 };
 
-export const createSubtask = ({subtaskName, minutesNeeded, taskDoc, description=null, completed=false, defaultSubtask=false}) => {
-    const user = auth.currentUser;
+export const createSubtask = async ({subtaskName, minutesNeeded, taskDoc, description=null, completed=false, defaultSubtask=false}) => {
+    taskDoc = await taskDoc;
     try{
         const subtasksRef = taskDoc.collection("subtasks").doc();
         subtasksRef.set({
@@ -115,11 +115,18 @@ export const createSubtask = ({subtaskName, minutesNeeded, taskDoc, description=
 
 // ============================= getter methods ==============================
 
-export const getCatDoc = async ({categoryName}) => {
+export const getCatDoc = async ({categoryName=null, categoryID=null}) => {
     const user = auth.currentUser;
     try{
         const userRef = firestore.collection("users").doc(user.uid);
-        const snapshot = await userRef.collection("todo").where('categoryName', '==', categoryName).get();
+        var snapshot = null;
+        if (categoryName && !categoryID){
+            snapshot = await userRef.collection("todo").where('categoryName', '==', categoryName).get();
+        } else {
+            var retDoc = await userRef.collection("todo").doc(categoryID);
+            retDoc = await retDoc;
+            return retDoc;
+        }
         if (snapshot.empty) {
             console.log('No matching categories');
             return null;
@@ -138,15 +145,23 @@ export const getCatDoc = async ({categoryName}) => {
     return null;
 };
 
-export const getProjDoc = async ({catDoc=null, categoryName=null, projectName}) => {
+export const getProjDoc = async ({catDoc=null, categoryName=null, categoryID=null, projectName=null, projectID=null}) => {
     if (categoryName && !catDoc){
         catDoc = await getCatDoc({categoryName});
+    } else if (categoryID && !catDoc){
+        catDoc = await getCatDoc({categoryID});
     }
     catDoc = await catDoc;
 
     try{
-        // const userRef = firestore.collection("users").doc(user.uid);
-        const snapshot = await catDoc.collection("projects").where('projectName', '==', projectName).get();
+        var snapshot = null;
+        if (projectName && !projectID){
+            snapshot = await catDoc.collection("projects").where('projectName', '==', projectName).get();
+        } else {
+            var retDoc = await catDoc.collection("projects").doc(projectID);
+            retDoc = await retDoc;
+            return retDoc;
+        }
         if (snapshot.empty) {
             console.log('No matching projects');
             return null;
@@ -165,19 +180,31 @@ export const getProjDoc = async ({catDoc=null, categoryName=null, projectName}) 
     return null;
 };
 
-export const getTaskDoc = async ({catDoc=null, categoryName=null, projDoc=null, projectName=null, taskName}) => {
+export const getTaskDoc = async ({catDoc=null, categoryName=null, categoryID=null, projDoc=null, projectName=null, projectID=null, taskName=null, taskID=null}) => {
     if (categoryName && !catDoc){
         catDoc = await getCatDoc({categoryName});
+    } else if (categoryID && !catDoc){
+        catDoc = await getCatDoc({categoryID});
     }
     catDoc = await catDoc;
 
     if (projectName && !projDoc){
         projDoc = await getProjDoc({catDoc, projectName});
+    } else if (projectID && !projDoc){
+        // console.log(projectID);
+        projDoc = await getProjDoc({catDoc, projectID});
     }
     projDoc = await projDoc;
 
     try{
-        const snapshot = await projDoc.collection("tasks").where('taskName', '==', taskName).get();
+        var snapshot = null;
+        if (taskName && !taskID){
+            snapshot = await projDoc.collection("tasks").where('taskName', '==', taskName).get();
+        } else {
+            var retDoc = await projDoc.collection("tasks").doc(taskID);
+            retDoc = await retDoc;
+            return retDoc;
+        }
         if (snapshot.empty) {
             console.log('No matching tasks');
             return null;
@@ -196,24 +223,37 @@ export const getTaskDoc = async ({catDoc=null, categoryName=null, projDoc=null, 
     return null;
 };
 
-export const getSubtaskDoc = async ({catDoc=null, categoryName=null, projDoc=null, projectName=null, taskDoc=null, taskName=null, subtaskName}) => {
+export const getSubtaskDoc = async ({catDoc=null, categoryName=null, categoryID=null, projDoc=null, projectName=null, projectID=null, taskDoc=null, taskName=null, taskID=null, subtaskName=null, subtaskID=null}) => {
     if (categoryName && !catDoc){
         catDoc = await getCatDoc({categoryName});
+    } else if (categoryID && !catDoc){
+        catDoc = await getCatDoc({categoryID});
     }
     catDoc = await catDoc;
 
     if (projectName && !projDoc){
         projDoc = await getProjDoc({catDoc, projectName});
+    } else if (projectID && !projDoc){
+        projDoc = await getProjDoc({catDoc, projectID});
     }
     projDoc = await projDoc;
 
     if (taskName && !taskDoc){
         taskDoc = await getTaskDoc({catDoc, projDoc, taskName});
+    } else if (taskID && !taskDoc) {
+        taskDoc = await getTaskDoc({catDoc, projDoc, taskID});
     }
     taskDoc = await taskDoc;
 
     try{
-        const snapshot = await taskDoc.collection("subtasks").where('subtaskName', '==', subtaskName).get();
+        var snapshot = null;
+        if (subtaskName && !subtaskID){
+            snapshot = await taskDoc.collection("subtasks").where('subtaskName', '==', subtaskName).get();
+        } else {
+            var retDoc = await taskDoc.collection("subtasks").doc(subtaskID);
+            retDoc = await retDoc;
+            return retDoc;
+        }
         if (snapshot.empty) {
             console.log('No matching subtasks');
             return null;
@@ -231,5 +271,3 @@ export const getSubtaskDoc = async ({catDoc=null, categoryName=null, projDoc=nul
     }
     return null;
 };
-
-// ============================== update functions ===============================
