@@ -1,12 +1,12 @@
 import React from 'react'
 import Project from './Project'
 
-function Projects({projects, onDelete, onEdit}){
+function Projects({projects, onDelete, onEdit, updateMinutes}){
     return (
         <ul className='projects'>
             {
             projects.map((project) => 
-            <Project key={project.id} project={project} onDelete={onDelete} onEdit={onEdit}/>
+            <Project key={project.id} project={project} onDelete={onDelete} onEdit={onEdit} updateMinutes={updateMinutes}/>
             )}
         </ul>
     )

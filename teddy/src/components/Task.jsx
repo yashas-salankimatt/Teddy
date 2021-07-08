@@ -7,24 +7,8 @@ import AddSubtask from './AddSubtask'
 import EditTask from './EditTask'
 import moment from 'moment';
 
-function Task({task, onDelete, onEdit}){
-    const [subtasks, setSubtasks] = useState([
-        {
-            id: '0',
-            name: 'First Subtask',
-            minutes: 30
-        },
-        {
-            id: '1',
-            name: 'Second Subtask',
-            minutes: 40
-        },
-        {
-            id: '2',
-            name: 'Third Subtask',
-            minutes: 50
-        },
-    ])
+function Task({task, onDelete, onEdit, updateMinutes}){
+    const [subtasks, setSubtasks] = useState([])
 
     const [showAddSubtask, setShowAddSubtask] = useState(false)
 
@@ -34,21 +18,40 @@ function Task({task, onDelete, onEdit}){
     const toggleTask = () => setTaskIsOpen(!taskIsOpen)
 
     const addSubtask = (subtask) => {
-        const id = Math.floor(Math.random() * 10000) + 1
+        console.log(task.id)
+        let id = Math.floor(Math.random() * 10000) + 1
         console.log(id)
         const newSubtask = {id, ...subtask}
         setSubtasks([...subtasks, newSubtask])
+        id = task.id
+        let name = task.name
+        let dueDate = task.dueDate
+        let minutes = +task.minutes + +subtask.minutes
+        const newTask = {id, name, dueDate, minutes}
+        updateMinutes(newTask)
     }
 
     const deleteSubtask = (id) => {
+        let name = task.name
+        let dueDate = task.dueDate
+        let minutes = +task.minutes - subtasks.find(subtask => subtask.id === id).minutes
         setSubtasks(subtasks.filter((subtask) => subtask.id !== id))
+        id = task.id
+        const newTask = {id, name, dueDate, minutes}
+        updateMinutes(newTask)
     }
 
-    const editSubtask = (editSubtask) => {   
+    const editSubtask = (editSubtask, oldMinutes) => {   
         setSubtasks(subtasks.map(function(subtask) {
             if (subtask.id !== editSubtask.id){
                 return subtask
             } else {
+                let id = task.id
+                let name = task.name
+                let dueDate = task.dueDate
+                let minutes = +(task.minutes - oldMinutes) + +editSubtask.minutes
+                const newTask = {id, name, dueDate, minutes}
+                updateMinutes(newTask)
                 return editSubtask
             }
         }, this))
@@ -63,6 +66,9 @@ function Task({task, onDelete, onEdit}){
                 </h3>
                 <p>
                     {moment(task.dueDate).format('MMMM d, yyyy - h:mm a')}
+                </p>
+                <p>
+                    Total Task Time: {task.minutes} minutes
                 </p>
                 <Button color={showAddSubtask ? 'red' : 'green'} text={showAddSubtask ? 'Close' : 'Add'} 
                     onClick={() => setShowAddSubtask(!showAddSubtask)}/>

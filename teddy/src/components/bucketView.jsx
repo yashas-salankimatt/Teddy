@@ -10,17 +10,20 @@ function BucketView(props) {
         {
             id: '0',
             name: 'Bucket feature',
-            dueDate: new Date("8/20/2021")
+            dueDate: new Date("8/20/2021"),
+            minutes: 0,
         },
         {
             id: '1',
             name: 'Calendar feature',
-            dueDate: new Date("5/10/2021")
+            dueDate: new Date("5/10/2021"),
+            minutes: 0,
         },
         {
             id: '2',
             name: 'Drag and Drop feature',
-            dueDate: new Date("1/2/2021")
+            dueDate: new Date("1/2/2021"),
+            minutes: 0,
         },
     ])
 
@@ -47,6 +50,18 @@ function BucketView(props) {
         }, this))
     }
 
+    const updateProjectMinutes = (newProject) => {
+        setProjects(projects.map(function(project) {
+            if (project.id !== newProject.id){
+                console.log('here')
+                return project
+            } else {
+                console.log(newProject.minutes)
+                return newProject
+            }
+        }, this))
+    }
+
     return (
         
         <div className='bucketView'>
@@ -56,7 +71,7 @@ function BucketView(props) {
             <div className='bucketScroll'>
                 {showAddProject && <AddProject onAdd = {addProject}/>}
                 {
-                projects.length>0 ? (<Projects projects = {projects} onDelete={deleteProject} onEdit={editProject}/>) : ('No projects to show')
+                projects.length>0 ? (<Projects projects = {projects} onDelete={deleteProject} onEdit={editProject} updateMinutes={updateProjectMinutes}/>) : ('No projects to show')
                 }
             </div>
 

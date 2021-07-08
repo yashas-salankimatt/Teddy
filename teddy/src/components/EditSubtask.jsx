@@ -3,6 +3,7 @@ import { useState } from 'react'
 const EditSubtask = ({ onEdit, subtask }) => {
     const [name, setName] = useState(subtask.name)
     const [minutes, setMinutes] = useState(subtask.minutes)
+    const oldMinutes = subtask.minutes
 
     const onSubmit = (e) => {
         e.preventDefault()
@@ -13,10 +14,10 @@ const EditSubtask = ({ onEdit, subtask }) => {
         }
         
         let id = subtask.id
-        onEdit( {id, name, minutes} )
+        onEdit( {id, name, minutes}, oldMinutes )
 
         setName('')
-        setMinutes('')
+        setMinutes(0)
     }
 
     return (

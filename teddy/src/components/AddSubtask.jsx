@@ -15,7 +15,7 @@ const AddSubtask = ({ onAdd }) => {
         onAdd( {name, minutes} )
 
         setName('')
-        setMinutes('')
+        setMinutes(0)
     }
 
     return (

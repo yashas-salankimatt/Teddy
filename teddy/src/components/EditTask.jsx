@@ -21,8 +21,9 @@ const EditTask = ({ onEdit, task }) => {
         }
 
         let id = task.id
+        let minutes = task.minutes
 
-        onEdit( { id, name, dueDate} )
+        onEdit( { id, name, dueDate, minutes} )
 
         setName('')
         setDueDate(new Date())
