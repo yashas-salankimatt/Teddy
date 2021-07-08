@@ -21,8 +21,8 @@ function Subtask({subtask, onDelete, onEdit}){
     }
 
     return (
-        <li className='subtask'>
-            <div>
+        <li>
+            <div className='subtask'>
                 <h3 ref={labelRef}>
                     <input type='checkbox' onClick={handleCheck}/>
                     {subtask.name}

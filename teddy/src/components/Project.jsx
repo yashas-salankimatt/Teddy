@@ -77,8 +77,8 @@ function Project({project, onDelete, onEdit, updateMinutes}){
     }
 
     return (
-        <li className='project'>
-            <div>
+        <li>
+            <div className='project'>
                 <h3 ref={labelRef}>
                     <input type='checkbox' onClick={handleCheck}/>
                     {project.name}

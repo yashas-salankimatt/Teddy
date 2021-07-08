@@ -50,8 +50,8 @@ function Course({course, onDelete, onEdit}) {
 
     return (
         
-        <li className='course'>
-            <div>
+        <li>
+            <div className='course'>
                 <h3>
                     {course.name}
                     <FaTimes style = {{color: 'red', cursor: 'pointer',}} onClick={() => onDelete(course.id)}/>

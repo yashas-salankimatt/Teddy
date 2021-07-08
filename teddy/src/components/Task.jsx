@@ -70,8 +70,8 @@ function Task({task, onDelete, onEdit, updateMinutes}){
     }
 
     return (
-        <li className='task'>
-            <div>
+        <li>
+            <div className='task'>
                 <h3 ref={labelRef}>
                     <input type='checkbox' onClick={handleCheck}/>
                     {task.name}

@@ -3,7 +3,7 @@ import Project from './Project'
 
 function Projects({projects, onDelete, onEdit, updateMinutes}){
     return (
-        <ul className='projects'>
+        <ul>
             {
             projects.map((project) => 
             <Project key={project.id} project={project} onDelete={onDelete} onEdit={onEdit} updateMinutes={updateMinutes}/>
