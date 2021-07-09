@@ -33,7 +33,7 @@ export const createCategory = ({categoryName, archived=false, defaultCat=false})
         categoriesRef.set({
             categoryName, archived, defaultCat
         });
-        console.log(categoriesRef.id);
+        // console.log(categoriesRef.id);
         createProject({
             projectName:"defaultProj", 
             completed: true,
@@ -74,7 +74,7 @@ export const createProject = async ({projectName, dueDate, catDoc, description=n
     return null;
 };
 
-export const createTask = async ({taskName, dueDate, projDoc, description=null, completed=false, defaultTask=false}) => {
+export const createTask = async ({taskName, dueDate, projDoc, minutesNeeded=null, description=null, completed=false, defaultTask=false}) => {
     projDoc = await projDoc;
     try{
         const tasksRef = projDoc.collection("tasks").doc();
@@ -89,6 +89,13 @@ export const createTask = async ({taskName, dueDate, projDoc, description=null, 
             defaultSubtask: true,
             taskDoc: tasksRef
         });
+        if (minutesNeeded){
+            createSubtask({
+                subtaskName: "General",
+                minutesNeeded,
+                taskDoc: tasksRef
+            });
+        }
         return tasksRef;
     } catch(error) {
         console.log("Error in trying to create task");
@@ -171,7 +178,7 @@ export const getProjDoc = async ({catDoc=null, categoryName=null, categoryID=nul
             return null;
         }
         const retRef = await snapshot.docs[0].ref;
-        console.log(retRef.id);
+        // console.log(retRef.id);
         return retRef;
     } catch(error) {
         console.log("Error in trying to get project ID");
@@ -214,7 +221,7 @@ export const getTaskDoc = async ({catDoc=null, categoryName=null, categoryID=nul
             return null;
         }
         const retRef = await snapshot.docs[0].ref;
-        console.log(retRef.id);
+        // console.log(retRef.id);
         return retRef;
     } catch(error) {
         console.log("Error in trying to get task ID");
