@@ -1,9 +1,10 @@
 import React from 'react';
+import Categories from './Categories';
 
 function BucketView(props) {
     return (
         <div>
-            <h1 style={{ backgroundColor: "gray" }}>Bucket view</h1>
+            <Categories></Categories>
         </div>
     );
 }

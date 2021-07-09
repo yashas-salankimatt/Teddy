@@ -42,9 +42,6 @@ function ProfilePanel (props) {
                                     }
                                 }
                            }
-                            // const projDoc = getProjDoc({categoryName: "CS", projectName: "PA 1"});
-                            // const doc = getTaskDoc({catDoc, projectName: "defaultProj", taskName: "defaultTask"});
-                            // createSubtask({subtaskName: "TestSUbTask6", minutesNeeded: 700, taskDoc: doc});
                         }}
                         type="button"
                         className="GeneralButton btn btn-secondary"

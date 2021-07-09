@@ -11,11 +11,11 @@ export const createDefaultDoc = async () => {
             try {
                 console.log("Attempting to create user doc since none exists");
                 userRef.set({displayName, email, uid});
-                createCategory({
-                    categoryName:"defaultCat", 
-                    archived:true, 
-                    defaultCat:true
-                });
+                // createCategory({
+                //     categoryName:"defaultCat", 
+                //     archived:true, 
+                //     defaultCat:true
+                // });
             } catch (error) {
                 console.error("Error creating default doc for user");
             }
@@ -34,14 +34,14 @@ export const createCategory = ({categoryName, archived=false, defaultCat=false})
             categoryName, archived, defaultCat
         });
         // console.log(categoriesRef.id);
-        createProject({
-            projectName:"defaultProj", 
-            completed: true,
-            // dueDate: fb.firestore.Timestamp.fromDate(new Date('July 23, 2021')),
-            dueDate: null,
-            catDoc: categoriesRef,
-            defaultProj:true
-        });
+        // createProject({
+        //     projectName:"defaultProj", 
+        //     completed: true,
+        //     // dueDate: fb.firestore.Timestamp.fromDate(new Date('July 23, 2021')),
+        //     dueDate: null,
+        //     catDoc: categoriesRef,
+        //     defaultProj:true
+        // });
         return categoriesRef;
     } catch(error) {
         console.log("Error in trying to create category");
@@ -58,14 +58,14 @@ export const createProject = async ({projectName, dueDate, catDoc, description=n
             projectName, completed, defaultProj, dueDate, description
         });
         // console.log(projectsRef.id); 
-        createTask({
-            taskName: "defaultTask",
-            completed: true,
-            // dueDate: fb.firestore.Timestamp.fromDate(new Date('July 22, 2021')),
-            dueDate: null,
-            projDoc: projectsRef,
-            defaultTask:true
-        });
+        // createTask({
+        //     taskName: "defaultTask",
+        //     completed: true,
+        //     // dueDate: fb.firestore.Timestamp.fromDate(new Date('July 22, 2021')),
+        //     dueDate: null,
+        //     projDoc: projectsRef,
+        //     defaultTask:true
+        // });
         return projectsRef;
     } catch(error) {
         console.log("Error in trying to create project");
@@ -82,13 +82,13 @@ export const createTask = async ({taskName, dueDate, projDoc, minutesNeeded=null
             taskName, completed, defaultTask, dueDate, description
         });
         // console.log(tasksRef.id);
-        createSubtask({
-            subtaskName: "defaultSubtask",
-            completed: true,
-            minutesNeeded: 0,
-            defaultSubtask: true,
-            taskDoc: tasksRef
-        });
+        // createSubtask({
+        //     subtaskName: "defaultSubtask",
+        //     completed: true,
+        //     minutesNeeded: 0,
+        //     defaultSubtask: true,
+        //     taskDoc: tasksRef
+        // });
         if (minutesNeeded){
             createSubtask({
                 subtaskName: "General",
@@ -140,13 +140,12 @@ export const getCatDoc = async ({categoryName=null, categoryID=null}) => {
         }
         if (snapshot.size > 1){
             console.log('More than one category of this name');
-            return null;
         }
         const retRef = await snapshot.docs[0].ref;
-        console.log(retRef.id);
+        // console.log(retRef.id);
         return retRef;
     } catch(error) {
-        console.log("Error in trying to get category ID");
+        console.log("Error in trying to get category doc");
         console.log(error);
     }
     return null;
@@ -278,3 +277,31 @@ export const getSubtaskDoc = async ({catDoc=null, categoryName=null, categoryID=
     }
     return null;
 };
+
+export const deleteCategory = async ({categoryName=null, categoryID=null}) => {
+    try{
+        var catDoc = await getCatDoc({categoryName, categoryID});
+        catDoc = await catDoc;
+        const retID = catDoc.id;
+        catDoc.delete();
+        return retID;
+    } catch(error) {
+        console.log("Error in trying to delete category");
+        console.log(error);
+    }
+    return null;
+};
+
+// export const deleteProject = async ({catDoc, projectName=null, projectID=null}) => {
+//     try{
+//         catDoc = await catDoc;
+//         var projDoc = await getProjDoc({catDoc, projectName, projectID});
+//         projDoc = await projDoc;
+//         projDoc.delete();
+//     } catch(error) {
+//         console.log("Error in trying to delete psroject");
+//         console.log(error);
+//     }
+//     return null;
+// };
+
