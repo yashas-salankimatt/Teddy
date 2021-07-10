@@ -25,13 +25,13 @@ export const createDefaultDoc = async () => {
 
 // ============================== creation methods ==========================
 
-export const createCategory = ({categoryName, archived=false, defaultCat=false}) => {
+export const createCategory = ({categoryName, archived=false}) => {
     const user = auth.currentUser;
     try{
         const userRef = firestore.collection("users").doc(user.uid);
         const categoriesRef = userRef.collection("todo").doc();
         categoriesRef.set({
-            categoryName, archived, defaultCat
+            categoryName, archived
         });
         // console.log(categoriesRef.id);
         // createProject({
@@ -50,12 +50,12 @@ export const createCategory = ({categoryName, archived=false, defaultCat=false})
     return null;
 };
 
-export const createProject = async ({projectName, dueDate, catDoc, description=null, completed=false, defaultProj=false}) => {
+export const createProject = async ({projectName, dueDate, catDoc, description=null, completed=false}) => {
     catDoc = await catDoc;
     try{
         const projectsRef = catDoc.collection("projects").doc();
         projectsRef.set({
-            projectName, completed, defaultProj, dueDate, description
+            projectName, completed, dueDate, description
         });
         // console.log(projectsRef.id); 
         // createTask({
@@ -74,12 +74,12 @@ export const createProject = async ({projectName, dueDate, catDoc, description=n
     return null;
 };
 
-export const createTask = async ({taskName, dueDate, projDoc, minutesNeeded=null, description=null, completed=false, defaultTask=false}) => {
+export const createTask = async ({taskName, dueDate, projDoc, minutesNeeded=null, description=null, completed=false}) => {
     projDoc = await projDoc;
     try{
         const tasksRef = projDoc.collection("tasks").doc();
         tasksRef.set({
-            taskName, completed, defaultTask, dueDate, description
+            taskName, completed, dueDate, description
         });
         // console.log(tasksRef.id);
         // createSubtask({
@@ -104,12 +104,12 @@ export const createTask = async ({taskName, dueDate, projDoc, minutesNeeded=null
     return null;
 };
 
-export const createSubtask = async ({subtaskName, minutesNeeded, taskDoc, description=null, completed=false, defaultSubtask=false}) => {
+export const createSubtask = async ({subtaskName, minutesNeeded, taskDoc, description=null, completed=false}) => {
     taskDoc = await taskDoc;
     try{
         const subtasksRef = taskDoc.collection("subtasks").doc();
         subtasksRef.set({
-            subtaskName, completed, defaultSubtask, minutesNeeded, description
+            subtaskName, completed, minutesNeeded, description
         });
         // console.log(subtasksRef.id);
         return subtasksRef;

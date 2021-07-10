@@ -20,8 +20,7 @@ function Categories(props) {
             categoryID: catDocID,
             categoryName: categoryName,
             catDoc,
-            archived: archived,
-            defaultCat: false
+            archived: archived
         });
         // setCatState(categories.map((cat) => cat.catDoc));
         setCatState(categories.map((cat) => cat.categoryID));
@@ -52,7 +51,7 @@ function Categories(props) {
         async function fetchData() {
             const user = auth.currentUser;
             try {
-                const snapshot = await firestore.collection("users").doc(user.uid).collection("todo").where('defaultCat', '!=', true).get();
+                const snapshot = await firestore.collection("users").doc(user.uid).collection("todo").get();
                 if (snapshot.empty){
                     console.log("No categories for this user");
                     return;
@@ -63,7 +62,6 @@ function Categories(props) {
                         categoryName: cat.data().categoryName,
                         catDoc: cat.ref,
                         archived: cat.data().archived,
-                        defaultCat: false
                     });
                 });
                 setCatState(categories.map((cat) => cat.categoryID));

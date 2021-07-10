@@ -3,7 +3,6 @@ import { getCatDoc } from '../utils/FirestoreConfig';
 import './Projects.css';
 
 
-
 function Projects ({catID, deleteCatFunc}) {
     var projects = [];
     var currProjName = null;
@@ -11,7 +10,9 @@ function Projects ({catID, deleteCatFunc}) {
     const [catDoc, setCatDoc] = useState(null);
     const [categoryName, setCatName] = useState("");
     const [projState, setProjState] = useState([]);
+    const [showChildren, setShowChildren] = useState(false);
 
+    // TODO IMPLEMENT CREATE PROJECT POPUP
     const createProj = ({projectName}) => {
 
     };
@@ -34,7 +35,7 @@ function Projects ({catID, deleteCatFunc}) {
             });
             async function fetchData() {
                 try {
-                    const snapshot = await catDoc.collection("projects").where('defaultProj', '!=', true).get();
+                    const snapshot = await catDoc.collection("projects").get();
                     if (snapshot.empty){
                         console.log("No projects for category " + categoryName);
                         return;
@@ -45,8 +46,7 @@ function Projects ({catID, deleteCatFunc}) {
                             projectName: proj.data().projectName,
                             projDoc: proj.ref,
                             description: proj.data().description,
-                            completed: proj.data().completed,
-                            defaultProj: false
+                            completed: proj.data().completed
                         });
                     });
                     setProjState(projects.map((proj) => proj.projectID));
@@ -71,7 +71,7 @@ function Projects ({catID, deleteCatFunc}) {
         <div className='CategoryItem'>
             {catDoc && <li className='CategoryListItem' key={catDoc.id}>
                 {categoryName}
-                <div>
+               {showChildren &&  <div>
                     <h5>Projects</h5>
                     <div className='CreateProjectWrapper'>
                         <form>
@@ -90,8 +90,11 @@ function Projects ({catID, deleteCatFunc}) {
                             // INSERT TASKS ELEMENT HERE
                         ))}
                     </ul>
-                </div>
+                </div>}
             </li>}
+            <button className='EditButton btn btn-secondary' onClick={() => {
+                setShowChildren(!showChildren);
+            }}>Show Projects</button>
             <button className='EditButton btn btn-secondary'>Edit</button>
             <button className='DeleteButton btn btn-secondary' onClick={() => {deleteCatFunc({categoryID: catID})}}>Delete</button>
         </div>

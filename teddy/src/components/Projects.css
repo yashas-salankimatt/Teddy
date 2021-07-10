@@ -2,6 +2,8 @@
     display: flex;
     flex-direction: row;
     width:max-content;
+    margin-top: 10px;
+    margin-bottom: 10px;
     /* justify-content: center;
     align-content: center; */
     /* outline-width: 5px;
@@ -20,11 +22,13 @@
     height: min-content;
     justify-content:end;
     margin-right: 5px;
+    margin-left: 5px;
     /* align-self: flex-end; */
 }
 
 .DeleteButton {
     margin-left: 5px;
+    margin-right:5px;
     height: min-content;
     justify-content:end;
     /* align-self: flex-end; */
