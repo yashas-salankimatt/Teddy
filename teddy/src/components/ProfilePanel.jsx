@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import './ProfilePanel.css';
 import { UserContext } from '../providers/UserProvider';
 import { fb, signInWithGoogle, signOutWithGoogle } from "../utils/FirebaseConfig";
-import {createCategory, getSubtaskDoc, getCatDoc, getProjDoc, getTaskDoc, createSubtask, createProject, createTask} from "../utils/FirestoreConfig";
+import {createCategory, createProject, createTask} from "../utils/FirestoreConfig";
 
 
 function ProfilePanel (props) {

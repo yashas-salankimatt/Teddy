@@ -1,4 +1,4 @@
-import { fb, auth, firestore } from "./FirebaseConfig";
+import { auth, firestore } from "./FirebaseConfig";
 
 export const createDefaultDoc = async () => { 
     const user = auth.currentUser;
@@ -278,12 +278,45 @@ export const getSubtaskDoc = async ({catDoc=null, categoryName=null, categoryID=
     return null;
 };
 
+
+
 export const deleteCategory = async ({categoryName=null, categoryID=null}) => {
     try{
-        var catDoc = await getCatDoc({categoryName, categoryID});
-        catDoc = await catDoc;
-        const retID = catDoc.id;
-        catDoc.delete();
+        // console.log(categoryName);
+        var retID = null;
+        getCatDoc({categoryName, categoryID}).then((catDoc) => {
+            // catDoc = await catDoc;
+            retID = catDoc.id;
+            catDoc.collection("projects").get().then((projectsDocs) => {
+                if (projectsDocs.empty){
+                    // break;
+                } else {
+                    projectsDocs.forEach((projectDoc) => {
+                        projectDoc.ref.collection("tasks").get().then((tasksDocs) => {
+                            if (tasksDocs.empty){
+                                // break;
+                            } else {
+                                tasksDocs.forEach((taskDoc) => {
+                                    taskDoc.ref.collection("subtasks").get().then((subtaskDocs) => {
+                                        if (subtaskDocs.empty){
+                                            // break;
+                                        } else {
+                                            subtaskDocs.forEach((subtaskDoc) => {
+                                                subtaskDoc.ref.delete();
+                                            });
+                                        }
+                                    });
+                                    taskDoc.ref.delete();
+                                });
+                            }
+                        });
+                        projectDoc.ref.delete();
+                    });
+                }
+            });
+            catDoc.delete();
+            // console.log(retID);
+        });
         return retID;
     } catch(error) {
         console.log("Error in trying to delete category");
@@ -292,16 +325,38 @@ export const deleteCategory = async ({categoryName=null, categoryID=null}) => {
     return null;
 };
 
-// export const deleteProject = async ({catDoc, projectName=null, projectID=null}) => {
-//     try{
-//         catDoc = await catDoc;
-//         var projDoc = await getProjDoc({catDoc, projectName, projectID});
-//         projDoc = await projDoc;
-//         projDoc.delete();
-//     } catch(error) {
-//         console.log("Error in trying to delete psroject");
-//         console.log(error);
-//     }
-//     return null;
-// };
+
+export const deleteProject = async ({catDoc, projectName=null, projectID=null}) => {
+    try{
+        catDoc = await catDoc;
+        var retID = null;
+        getProjDoc({catDoc, projectName, projectID}).then((projDoc) => {
+            retID = projDoc.id;
+            projDoc.collection("tasks").get().then((tasksDocs) => {
+                if (tasksDocs.empty){
+                    // break;
+                } else {
+                    tasksDocs.forEach((taskDoc) => {
+                        taskDoc.ref.collection("subtasks").get().then((subtaskDocs) => {
+                            if (subtaskDocs.empty){
+                                // break;
+                            } else {
+                                subtaskDocs.forEach((subtaskDoc) => {
+                                    subtaskDoc.ref.delete();
+                                });
+                            }
+                        });
+                        taskDoc.ref.delete();
+                    });
+                }
+            });
+            projDoc.delete();
+        });
+        return retID;
+    } catch(error) {
+        console.log("Error in trying to delete project");
+        console.log(error);
+    }
+    return null;
+};
 

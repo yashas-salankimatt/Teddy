@@ -19,7 +19,7 @@ export const auth = firebase.auth();
 export const firestore = firebase.firestore();
 
 const provider = new firebase.auth.GoogleAuthProvider();
-export const signInWithGoogle = (callback, user) => {
+export const signInWithGoogle = (callback) => {
     auth.signInWithPopup(provider);
     auth.onAuthStateChanged(createDefaultDoc);
 };

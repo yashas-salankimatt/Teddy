@@ -1,0 +1,42 @@
+.CategoryItem {
+    display: flex;
+    flex-direction: row;
+    width:max-content;
+    /* justify-content: center;
+    align-content: center; */
+    /* outline-width: 5px;
+    outline-color: black;
+    outline-style:dashed; */
+}
+
+.CategoryListItem {
+    justify-content: end;
+    list-style-image: url("../icons/arrow-right.svg");
+    font-size:x-large;
+    font-weight: bold;
+}
+
+.EditButton {
+    height: min-content;
+    justify-content:end;
+    margin-right: 5px;
+    /* align-self: flex-end; */
+}
+
+.DeleteButton {
+    margin-left: 5px;
+    height: min-content;
+    justify-content:end;
+    /* align-self: flex-end; */
+}
+
+.CreateProjectWrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-content: center;
+}
+
+.ProjectsList {
+    text-align: start;
+}
