@@ -1,9 +1,10 @@
 import React from 'react';
 import Categories from './Categories';
+import './Categories.css';
 
 function BucketView(props) {
     return (
-        <div>
+        <div className='ScrollView'>
             <Categories></Categories>
         </div>
     );

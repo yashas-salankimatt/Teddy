@@ -1,30 +1,32 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { UserContext } from '../providers/UserProvider';
+import React, { useEffect, useState } from 'react';
 import { auth, firestore } from '../utils/FirebaseConfig';
 import {createCategory, deleteCategory} from "../utils/FirestoreConfig";
 import Projects from './Projects';
 import './Categories.css'
 
 // TODO: Maybe make these a part of categories as stateful variables?
-var categories = [];
+// var categories = [];
 var currCatName = null;
 
 function Categories(props) {
-    const [catState, setCatState] = useState([]);
+    // const [catState, setCatState] = useState([]);
+    const [categories, setCategories] = useState([]);
     
     const createCat = async ({categoryName, archived=false}) => {
         var catDoc = await createCategory({categoryName, archived});
         // console.log("created");
         catDoc = await catDoc;
         var catDocID = catDoc.id;
-        categories.push({
+        var tempCategories = categories.concat();
+        tempCategories.push({
             categoryID: catDocID,
             categoryName: categoryName,
             catDoc,
             archived: archived
         });
+        setCategories(tempCategories);
         // setCatState(categories.map((cat) => cat.catDoc));
-        setCatState(categories.map((cat) => cat.categoryID));
+        // setCatState(categories.map((cat) => cat.categoryID));
         // console.log(catState);
     };
     
@@ -32,14 +34,19 @@ function Categories(props) {
         deleteCategory({categoryName, categoryID}).then((retID) => {
             categoryID = retID;
         });
+        setCategories([]);
         
-        const findInd = categories.findIndex((element) => {
+        var tempCategories = categories.concat();
+        console.log(tempCategories);
+        console.log(categories);
+        const findInd = tempCategories.findIndex((element) => {
             return (element.categoryID === categoryID || element.categoryName === categoryName);
         });
         if (findInd >= 0){
-            categories.splice(findInd, 1);
+            tempCategories.splice(findInd, 1);
         }
-        setCatState(categories.map((cat) => cat.categoryID));
+        setCategories(tempCategories);
+        // setCatState(categories.map((cat) => cat.categoryID));
         // setCatState(tempState);
         // console.log(categories);
         // console.log(catState);
@@ -48,7 +55,8 @@ function Categories(props) {
     // called on mount to populate for categories
     useEffect(() => {
         // console.log("Mounted");
-        categories = [];
+        // categories = [];
+        setCategories([]);
         async function fetchData() {
             const user = auth.currentUser;
             try {
@@ -57,15 +65,17 @@ function Categories(props) {
                     console.log("No categories for this user");
                     return;
                 }
+                var tempCategories = categories.concat();
                 snapshot.forEach((cat) => {
-                    categories.push({
+                    tempCategories.push({
                         categoryID: cat.id,
                         categoryName: cat.data().categoryName,
                         catDoc: cat.ref,
                         archived: cat.data().archived,
                     });
                 });
-                setCatState(categories.map((cat) => cat.categoryID));
+                setCategories(tempCategories);
+                // setCatState(categories.map((cat) => cat.categoryID));
                 // console.log(categories);
                 // console.log(catState);
             } catch (error) {
@@ -82,20 +92,24 @@ function Categories(props) {
 
     return (
         <div>
-            <h2>Categories</h2>
-            <div className='CreateCategoryWrapper'>
-                <form>
-                    <input className='form-control' type='text' onChange={categoryInputHandler} placeholder="Enter category name" name="catInput"></input>
-                </form>
-                <button className='btn btn-secondary m-1' onClick={() => createCat({categoryName: currCatName})}>
-                    Create Category
-                </button>
+            {/* <h1>Tasks</h1> */}
+            <div>
+                <h2>Categories</h2>
+                <div className='CreateCategoryWrapper'>
+                    <form>
+                        <input className='form-control' type='text' onChange={categoryInputHandler} placeholder="Enter category name" name="catInput"></input>
+                    </form>
+                    <button className='btn btn-secondary m-1' onClick={() => createCat({categoryName: currCatName})}>
+                        Create Category
+                    </button>
+                </div>
+                <ul className='CategoriesList'>
+                    {categories.map((element) => (
+                        <Projects catData={{element}} deleteCatFunc={deleteCat} key={element.catID}></Projects>
+                    ))}
+                </ul>
+
             </div>
-            <ul className='CategoriesList'>
-                {catState.map((element) => (
-                    <Projects catID={element} deleteCatFunc={deleteCat} key={element}></Projects>
-                ))}
-            </ul>
         </div>
     );
 }

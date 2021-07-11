@@ -1,17 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import { deleteProject, getCatDoc } from '../utils/FirestoreConfig';
+import { deleteProject} from '../utils/FirestoreConfig';
 import Tasks from './Tasks';
 import EditCategoryPopup from './EditCategoryPopup';
 import './Projects.css';
 
 
-function Projects ({catID, deleteCatFunc}) {
+function Projects ({catData, deleteCatFunc}) {
+    // console.log(catData);
     var currProjName = null;
 
     const [projects, setProjects] = useState([]);
     const [catDoc, setCatDoc] = useState(null);
     const [categoryName, setCatName] = useState("");
-    const [projState, setProjState] = useState([]);
+    // const [projState, setProjState] = useState([]);
     const [showChildren, setShowChildren] = useState(false);
     const [showEditCatPopup, setShowEditPopup] = useState(false);
 
@@ -26,7 +27,7 @@ function Projects ({catID, deleteCatFunc}) {
         });
 
         console.log(projects, projectID);
-        var tempProjects = projects;
+        var tempProjects = projects.concat();
         const findInd = tempProjects.findIndex((element) => {
             return (element.projectID === projectID || element.projectName === projectName);
         });
@@ -34,18 +35,13 @@ function Projects ({catID, deleteCatFunc}) {
             tempProjects.splice(findInd, 1);
         }
         setProjects(tempProjects);
-        console.log(projects);
-        setProjState(projects.map((proj) => proj.projectID));
+        // console.log(projects);
+        // setProjState(projects.map((proj) => proj.projectID));
     };
 
     useEffect(() => {
-        // console.log("beginning");
-        // projects = [];
-        getCatDoc({categoryID: catID}).then((ret) => {
-            setCatDoc(ret);
-            // console.log(ret);
-        });
-        
+        setCatDoc(catData.element.catDoc);
+        setCatName(catData.element.categoryName);
     }, []);
 
     useEffect(() => {
@@ -53,10 +49,10 @@ function Projects ({catID, deleteCatFunc}) {
         setProjects([]);
         // console.log("Reset projects");
         if (catDoc){
-            catDoc.get().then((retDoc) => {
-                setCatName(retDoc.data().categoryName);
-                // console.log(retDoc.data());
-            });
+            // catDoc.get().then((retDoc) => {
+            //     setCatName(retDoc.data().categoryName);
+            //     // console.log(retDoc.data());
+            // });
             async function fetchData() {
                 try {
                     const snapshot = await catDoc.collection("projects").get();
@@ -64,7 +60,7 @@ function Projects ({catID, deleteCatFunc}) {
                         console.log("No projects for category " + categoryName);
                         return;
                     }
-                    var tempProjects = projects;
+                    var tempProjects = projects.concat();
                     snapshot.forEach((proj) => {
                         tempProjects.push({
                             projectID: proj.id,
@@ -76,7 +72,7 @@ function Projects ({catID, deleteCatFunc}) {
                         });
                     });
                     setProjects(tempProjects);
-                    setProjState(projects.map((proj) => proj.projectID));
+                    // setProjState(projects.map((proj) => proj.projectID));
                 } catch (error) {
                     console.log("Error in trying to get projects for category " + categoryName);
                     console.log(error);
@@ -93,7 +89,13 @@ function Projects ({catID, deleteCatFunc}) {
 
     const projectInputHandler = (event) => {
         currProjName = event.target.value;
-    }
+    };
+
+    function updateCatData ({newCatData}) {
+        setCatName(newCatData.categoryName);
+        catData.element.categoryName = newCatData.categoryName;
+        catData.element.archived = newCatData.archived;
+    };
 
     // TODO:
     // - Add checkboxes to the projects list view- this is most likely going to be in the tasks.jsx file though
@@ -106,25 +108,17 @@ function Projects ({catID, deleteCatFunc}) {
                     setShowChildren(!showChildren);
                 }}>Show/Hide Projects</button>
                 <button className='EditButton btn btn-secondary' onClick={() => {setShowEditPopup(true)}}>Edit</button>
-                <button className='DeleteButton btn btn-secondary' onClick={() => {deleteCatFunc({categoryID: catID})}}>Delete</button>
-                <EditCategoryPopup trigger={showEditCatPopup} setTrig={setShowEditPopup} catDoc={catDoc}></EditCategoryPopup>
+                <button className='DeleteButton btn btn-secondary' onClick={() => {deleteCatFunc({categoryID: catDoc.id})}}>Delete</button>
+                <EditCategoryPopup trigger={showEditCatPopup} setTrig={setShowEditPopup} catData={catData} updateParentData={updateCatData}></EditCategoryPopup>
                 {showChildren &&  <div>
-                    <h5>Projects</h5>
                     <div className='CreateProjectWrapper'>
-                        <form>
-                            <input className='form-control' type='text' onChange={projectInputHandler} placeholder="Enter project name" name="projInput"></input>
-                        </form>
-                        <button className='btn btn-secondary m-1' onClick={() => {}}>
-                            +
-                        </button>
-                        <button className='btn btn-secondary m-1' onClick={() => {}}>
-                            -
-                        </button>
+                        <h5 className='m-2'>Projects</h5>
+                        <button className='btn btn-secondary m-1'>Create Project</button>
                     </div>
                     <ul className='ProjectsList'>
-                        {projState.map((element) => (
+                        {projects.map((element) => (
                             // <li key={element}>{element}</li>
-                            <Tasks catID={catID} projID={element} deleteProjFunction={deleteProj} key={element}></Tasks>
+                            <Tasks projData={{element}} deleteProjFunction={deleteProj} key={element.projectID}></Tasks>
                         ))}
                     </ul>
                 </div>}

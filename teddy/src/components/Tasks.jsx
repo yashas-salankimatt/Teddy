@@ -1,15 +1,19 @@
 import React, {useEffect, useState} from 'react';
-import { deleteTask, getProjDoc } from '../utils/FirestoreConfig';
+import { deleteTask} from '../utils/FirestoreConfig';
 import './Tasks.css';
+import EditProjectPopup from './EditProjectPopup';
+import {fb} from '../utils/FirebaseConfig';
 
-function Tasks({catID, projID, deleteProjFunction}) {
-    var tasks = [];
+function Tasks({projData, deleteProjFunction}) {
+    // var tasks = [];
     var currTaskName = null;
 
+    const [tasks, setTasks] = useState([]);
     const [projDoc, setProjDoc] = useState(null);
     const [projectName, setProjName] = useState("");
-    const [taskState, setTaskState] = useState([]);
+    // const [taskState, setTaskState] = useState([]);
     const [showChildren, setShowChildren] = useState(false);
+    const [showEditProjPopup, setShowEditPopup] = useState(false);
 
     // TODO IMPLEMENT CREATE TASK POPUP
     const createTask = ({taskName}) => {
@@ -21,27 +25,31 @@ function Tasks({catID, projID, deleteProjFunction}) {
             taskID = retID;
         });
 
-        const findInd = tasks.findIndex((element) => {
+        var tempTasks = tasks;
+        const findInd = tempTasks.findIndex((element) => {
             return (element.taskID === taskID || element.taskName === taskName);
         })
         if (findInd >= 0){
-            tasks.splice(findInd, 1);
+            tempTasks.splice(findInd, 1);
         }
-        setTaskState(tasks.map((task) => task.taskID));
+        setTasks(tempTasks);
+        // setTaskState(tasks.map((task) => task.taskID));
     };
 
     useEffect(() => {
-        getProjDoc({categoryID: catID, projectID: projID}).then((ret) => {
-            setProjDoc(ret);
-        });
+        // getProjDoc({categoryID: catID, projectID: projID}).then((ret) => {
+        //     setProjDoc(ret);
+        // });
+        setProjDoc(projData.element.projDoc);
+        setProjName(projData.element.projectName);
     }, []);
 
     useEffect(() => {
-        tasks = [];
+        // tasks = [];
         if (projDoc){
-            projDoc.get().then((retDoc) => {
-                setProjName(retDoc.data().projectName);
-            });
+            // projDoc.get().then((retDoc) => {
+            //     setProjName(retDoc.data().projectName);
+            // });
             async function fetchData() {
                 try {
                     const snapshot = await projDoc.collection("tasks").get();
@@ -49,8 +57,9 @@ function Tasks({catID, projID, deleteProjFunction}) {
                         console.log("No tasks for project " + projectName);
                         return;
                     }
+                    var tempTasks = tasks;
                     snapshot.forEach((task) => {
-                        tasks.push({
+                        tempTasks.push({
                             taskID: task.id,
                             taskDoc: task.ref,
                             taskName: task.data().taskName,
@@ -59,7 +68,8 @@ function Tasks({catID, projID, deleteProjFunction}) {
                             dueDate: task.data().dueDate
                         });
                     });
-                    setTaskState(tasks.map((task) => task.taskID));
+                    setTasks(tempTasks);
+                    // setTaskState(tasks.map((task) => task.taskID));
                 } catch(error) {
                     console.log("Error in trying to get tasks for project " + projectName);
                     console.log(error);
@@ -69,9 +79,17 @@ function Tasks({catID, projID, deleteProjFunction}) {
         }
     }, [projDoc]);
 
-    useEffect(() => {
-        console.log(taskState);
-    }, [taskState]);
+    // useEffect(() => {
+    //     console.log(taskState);
+    // }, [taskState]);
+
+    function updateProjData ({newProjData}) {
+        setProjName(newProjData.projectName);
+        projData.element.projectName = newProjData.projectName;
+        projData.element.completed = newProjData.completed;
+        projData.element.description = newProjData.description;
+        projData.element.dueDate = newProjData.dueDate;
+    };
 
     return (
         <div className='ProjectItem'>
@@ -80,18 +98,17 @@ function Tasks({catID, projID, deleteProjFunction}) {
                 <button className='EditButton btn btn-secondary' onClick={() => {
                     setShowChildren(!showChildren);
                 }}>Show/Hide Tasks</button>
-                <button className='EditButton btn btn-secondary'>Edit</button>
-                <button className='DeleteButton btn btn-secondary' onClick={() => {deleteProjFunction({projectID: projID})}}>Delete</button>
+                <button className='EditButton btn btn-secondary' onClick={() => {setShowEditPopup(true)}}>Edit</button>
+                <button className='DeleteButton btn btn-secondary' onClick={() => {deleteProjFunction({projectID: projDoc.id})}}>Delete</button>
+                <EditProjectPopup trigger={showEditProjPopup} setTrig={setShowEditPopup} projData={projData} updateParentData={updateProjData}></EditProjectPopup>
                 {showChildren && <div>
-                    <h5>Tasks</h5>
                     <div className='CreateTaskWrapper'>
-                        <form>
-                            <input className='form-control' type='text' placeholder="Enter task name" name="taskInput"></input>
-                        </form>
+                        <h5 className='m-2'>Tasks</h5>
+                        <button className='btn btn-secondary m-1'>Create Task</button>
                     </div>
                     <ul className='TasksList'>
-                        {taskState.map((element) => (
-                            <li key={element}>{element}</li>
+                        {tasks.map((element) => (
+                            <li key={element.taskID}>{element.taskName}</li>
                         ))}
                     </ul>
                 </div>}
