@@ -5,6 +5,7 @@ import {createCategory, deleteCategory} from "../utils/FirestoreConfig";
 import Projects from './Projects';
 import './Categories.css'
 
+// TODO: Maybe make these a part of categories as stateful variables?
 var categories = [];
 var currCatName = null;
 

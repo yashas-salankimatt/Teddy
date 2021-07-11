@@ -360,3 +360,46 @@ export const deleteProject = async ({catDoc, projectName=null, projectID=null}) 
     return null;
 };
 
+
+// TODO: TEST IF THIS WORKS
+export const deleteTask = async({projDoc, taskName=null, taskID=null}) => {
+    try{
+        projDoc = await projDoc;
+        var retID = null;
+        getTaskDoc({projDoc, taskName, taskID}).then((taskDoc) => {
+            retID = taskDoc.id;
+            taskDoc.collection("subtasks").get().then((subtaskDocs) => {
+                if (subtaskDocs.empty){
+                    // break;
+                } else {
+                    subtaskDocs.forEach((subtaskDoc) => {
+                        subtaskDoc.ref.delete();
+                    });
+                }
+            });
+            taskDoc.delete();
+        });
+        return retID;
+    }catch (error) {
+        console.log("Error in trying to delete task");
+        console.log(error);
+    }
+    return null;
+};
+
+// TODO: MAKE SURE THIS WORKS
+export const deleteSubtask = async ({taskDoc, subtaskName=null, subtaskID=null}) => {
+    try {
+        taskDoc = await taskDoc;
+        var retID = null;
+        getSubtaskDoc({taskDoc, subtaskName, subtaskID}).then((subtaskDoc) => {
+            retID = subtaskDoc.id;
+            subtaskDoc.delete();
+        });
+        return retID;
+    } catch (error) {
+        console.log("Error in trying to delete subtask");
+        console.log(error);
+    }
+    return null;
+};

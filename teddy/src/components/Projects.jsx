@@ -1,24 +1,46 @@
 import React, { useEffect, useState } from 'react';
-import { getCatDoc } from '../utils/FirestoreConfig';
+import { deleteProject, getCatDoc } from '../utils/FirestoreConfig';
+import Tasks from './Tasks';
+import EditCategoryPopup from './EditCategoryPopup';
 import './Projects.css';
 
 
 function Projects ({catID, deleteCatFunc}) {
-    var projects = [];
     var currProjName = null;
 
+    const [projects, setProjects] = useState([]);
     const [catDoc, setCatDoc] = useState(null);
     const [categoryName, setCatName] = useState("");
     const [projState, setProjState] = useState([]);
     const [showChildren, setShowChildren] = useState(false);
+    const [showEditCatPopup, setShowEditPopup] = useState(false);
 
     // TODO IMPLEMENT CREATE PROJECT POPUP
     const createProj = ({projectName}) => {
 
     };
-    
+
+    const deleteProj = ({projectID=null, projectName=null}) => {
+        deleteProject({catDoc, projectName, projectID}).then((retID) => {
+            projectID = retID;
+        });
+
+        console.log(projects, projectID);
+        var tempProjects = projects;
+        const findInd = tempProjects.findIndex((element) => {
+            return (element.projectID === projectID || element.projectName === projectName);
+        });
+        if (findInd >= 0){
+            tempProjects.splice(findInd, 1);
+        }
+        setProjects(tempProjects);
+        console.log(projects);
+        setProjState(projects.map((proj) => proj.projectID));
+    };
 
     useEffect(() => {
+        // console.log("beginning");
+        // projects = [];
         getCatDoc({categoryID: catID}).then((ret) => {
             setCatDoc(ret);
             // console.log(ret);
@@ -27,7 +49,9 @@ function Projects ({catID, deleteCatFunc}) {
     }, []);
 
     useEffect(() => {
-        projects = [];
+        // projects = [];
+        setProjects([]);
+        // console.log("Reset projects");
         if (catDoc){
             catDoc.get().then((retDoc) => {
                 setCatName(retDoc.data().categoryName);
@@ -40,15 +64,18 @@ function Projects ({catID, deleteCatFunc}) {
                         console.log("No projects for category " + categoryName);
                         return;
                     }
+                    var tempProjects = projects;
                     snapshot.forEach((proj) => {
-                        projects.push({
+                        tempProjects.push({
                             projectID: proj.id,
-                            projectName: proj.data().projectName,
                             projDoc: proj.ref,
+                            projectName: proj.data().projectName,
                             description: proj.data().description,
-                            completed: proj.data().completed
+                            completed: proj.data().completed,
+                            dueDate: proj.data().dueDate
                         });
                     });
+                    setProjects(tempProjects);
                     setProjState(projects.map((proj) => proj.projectID));
                 } catch (error) {
                     console.log("Error in trying to get projects for category " + categoryName);
@@ -59,19 +86,29 @@ function Projects ({catID, deleteCatFunc}) {
         }
     }, [catDoc]);
 
-    useEffect(() => {
-        console.log(projState);
-    }, [projState]);
+    // useEffect(() => {
+    //     console.log(projects);
+    //     console.log(projState);
+    // }, [projState]);
 
     const projectInputHandler = (event) => {
         currProjName = event.target.value;
     }
 
+    // TODO:
+    // - Add checkboxes to the projects list view- this is most likely going to be in the tasks.jsx file though
+    // - Add date due view to the projects list view- this is also most likely going to be in the tasks.jsx file
     return (
         <div className='CategoryItem'>
             {catDoc && <li className='CategoryListItem' key={catDoc.id}>
                 {categoryName}
-               {showChildren &&  <div>
+                <button className='EditButton btn btn-secondary' onClick={() => {
+                    setShowChildren(!showChildren);
+                }}>Show/Hide Projects</button>
+                <button className='EditButton btn btn-secondary' onClick={() => {setShowEditPopup(true)}}>Edit</button>
+                <button className='DeleteButton btn btn-secondary' onClick={() => {deleteCatFunc({categoryID: catID})}}>Delete</button>
+                <EditCategoryPopup trigger={showEditCatPopup} setTrig={setShowEditPopup} catDoc={catDoc}></EditCategoryPopup>
+                {showChildren &&  <div>
                     <h5>Projects</h5>
                     <div className='CreateProjectWrapper'>
                         <form>
@@ -86,17 +123,12 @@ function Projects ({catID, deleteCatFunc}) {
                     </div>
                     <ul className='ProjectsList'>
                         {projState.map((element) => (
-                            <li key={element}>{element}</li>
-                            // INSERT TASKS ELEMENT HERE
+                            // <li key={element}>{element}</li>
+                            <Tasks catID={catID} projID={element} deleteProjFunction={deleteProj} key={element}></Tasks>
                         ))}
                     </ul>
                 </div>}
             </li>}
-            <button className='EditButton btn btn-secondary' onClick={() => {
-                setShowChildren(!showChildren);
-            }}>Show Projects</button>
-            <button className='EditButton btn btn-secondary'>Edit</button>
-            <button className='DeleteButton btn btn-secondary' onClick={() => {deleteCatFunc({categoryID: catID})}}>Delete</button>
         </div>
     );
 }
