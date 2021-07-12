@@ -14,7 +14,7 @@
 .ProjectListItem {
     justify-content: end;
     list-style-image: url("../icons/arrow-right.svg");
-    font-size: x-large;
+    font-size:90%;
     font-weight: bold;
 }
 

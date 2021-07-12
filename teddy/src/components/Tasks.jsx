@@ -103,7 +103,7 @@ function Tasks({projData, deleteProjFunction}) {
                 <EditProjectPopup trigger={showEditProjPopup} setTrig={setShowEditPopup} projData={projData} updateParentData={updateProjData}></EditProjectPopup>
                 {showChildren && <div>
                     <div className='CreateTaskWrapper'>
-                        <h5 className='m-2'>Tasks</h5>
+                        <h4 className='m-2'>Tasks</h4>
                         <button className='btn btn-secondary m-1'>Create Task</button>
                     </div>
                     <ul className='TasksList'>

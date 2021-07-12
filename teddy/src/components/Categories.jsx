@@ -34,7 +34,7 @@ function Categories(props) {
         deleteCategory({categoryName, categoryID}).then((retID) => {
             categoryID = retID;
         });
-        setCategories([]);
+        // setCategories([]);
         
         var tempCategories = categories.concat();
         console.log(tempCategories);
@@ -45,7 +45,17 @@ function Categories(props) {
         if (findInd >= 0){
             tempCategories.splice(findInd, 1);
         }
+        console.log(tempCategories);
         setCategories(tempCategories);
+        // setCategories((prevCategories) => {
+        //     const findInd = prevCategories.findIndex((element) => {
+        //         return element.categoryID === categoryID;
+        //     });
+        //     if (findInd >= 0){
+        //         prevCategories.splice(findInd, 1);
+        //     }
+        //     return prevCategories;
+        // })
         // setCatState(categories.map((cat) => cat.categoryID));
         // setCatState(tempState);
         // console.log(categories);
@@ -108,7 +118,6 @@ function Categories(props) {
                         <Projects catData={{element}} deleteCatFunc={deleteCat} key={element.catID}></Projects>
                     ))}
                 </ul>
-
             </div>
         </div>
     );

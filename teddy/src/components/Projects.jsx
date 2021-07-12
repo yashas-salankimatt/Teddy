@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { deleteProject} from '../utils/FirestoreConfig';
+import { deleteProject, createProject} from '../utils/FirestoreConfig';
 import Tasks from './Tasks';
 import EditCategoryPopup from './EditCategoryPopup';
+import CreateProjectPopup from './CreateProjectPopup';
 import './Projects.css';
 
 
@@ -15,9 +16,31 @@ function Projects ({catData, deleteCatFunc}) {
     // const [projState, setProjState] = useState([]);
     const [showChildren, setShowChildren] = useState(false);
     const [showEditCatPopup, setShowEditPopup] = useState(false);
+    const [showCreateProjPopup, setCreateProjPopup] = useState(false);
 
     // TODO IMPLEMENT CREATE PROJECT POPUP
-    const createProj = ({projectName}) => {
+    const createProj = ({newProjData}) => {
+        console.log(newProjData);
+        createProject({
+            projectName: newProjData.projectName,
+            dueDate: newProjData.dueDate,
+            catDoc: catDoc,
+            description: newProjData.description,
+            completed: newProjData.completed
+        }).then((projRef) => {
+            var tempProjects = projects.concat();
+            console.log(tempProjects);
+            tempProjects.push({
+                projectID: projRef.id,
+                projDoc: projRef,
+                projectName: newProjData.projectName,
+                dueDate: newProjData.dueDate,
+                description: newProjData.description,
+                completed: newProjData.completed
+            });
+            console.log(tempProjects);
+            setProjects(tempProjects);
+        });
 
     };
 
@@ -26,7 +49,7 @@ function Projects ({catData, deleteCatFunc}) {
             projectID = retID;
         });
 
-        console.log(projects, projectID);
+        // console.log(projects, projectID);
         var tempProjects = projects.concat();
         const findInd = tempProjects.findIndex((element) => {
             return (element.projectID === projectID || element.projectName === projectName);
@@ -43,6 +66,11 @@ function Projects ({catData, deleteCatFunc}) {
         setCatDoc(catData.element.catDoc);
         setCatName(catData.element.categoryName);
     }, []);
+
+    useEffect(() => {
+        setCatDoc(catData.element.catDoc);
+        setCatName(catData.element.categoryName);
+    }, [catData]);
 
     useEffect(() => {
         // projects = [];
@@ -110,10 +138,12 @@ function Projects ({catData, deleteCatFunc}) {
                 <button className='EditButton btn btn-secondary' onClick={() => {setShowEditPopup(true)}}>Edit</button>
                 <button className='DeleteButton btn btn-secondary' onClick={() => {deleteCatFunc({categoryID: catDoc.id})}}>Delete</button>
                 <EditCategoryPopup trigger={showEditCatPopup} setTrig={setShowEditPopup} catData={catData} updateParentData={updateCatData}></EditCategoryPopup>
+                <CreateProjectPopup trigger={showCreateProjPopup} setTrig={setCreateProjPopup} updateParentData={createProj}></CreateProjectPopup>
                 {showChildren &&  <div>
                     <div className='CreateProjectWrapper'>
-                        <h5 className='m-2'>Projects</h5>
-                        <button className='btn btn-secondary m-1'>Create Project</button>
+                        <h4 className='m-2'>Projects</h4>
+                        <button className='btn btn-secondary m-1' onClick={() => {setCreateProjPopup(true)}}>Create Project</button>
+                        
                     </div>
                     <ul className='ProjectsList'>
                         {projects.map((element) => (
