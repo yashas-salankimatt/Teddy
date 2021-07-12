@@ -3,7 +3,7 @@ import {deleteSubtask, createSubtask} from '../utils/FirestoreConfig';
 import './Subtasks.css';
 import EditTaskPopup from './EditTaskPopup'
 // import Subtask from './Subtask'
-// import CreateSubtaskPopup from './CreateSubtaskPopup'
+import CreateSubtaskPopup from './CreateSubtaskPopup'
 
 function Subtasks({taskData, deleteTaskFunction}) {
     const [subtasks, setSubtasks] = useState([]);
@@ -59,7 +59,7 @@ function Subtasks({taskData, deleteTaskFunction}) {
     }, []);
 
     useEffect(() => {
-        setSubtasks([]);
+        // setSubtasks([]);
         setTaskDoc(taskData.element.taskDoc);
         setTaskName(taskData.element.taskName);
         setShowChildren(false);
@@ -116,7 +116,7 @@ function Subtasks({taskData, deleteTaskFunction}) {
                 <EditTaskPopup trigger={showEditTaskPopup} setTrig={setShowEditPopup} taskData={taskData} updateParentData={updateTaskData}></EditTaskPopup>
                 {showChildren && <div>
                     <div className='CreateSubtaskWrapper'>
-                        {/* Create subtask popup */}
+                        <CreateSubtaskPopup trigger={showCreateSubtaskPopup} setTrig={setCreateSubtaskPopup} updateParentData={createSubtaskFunc}></CreateSubtaskPopup>
                         <h4 className='m-2'>Subtasks</h4>
                         <button className='btn btn-secondary m-1' onClick={() => {setCreateSubtaskPopup(true)}}>Create Subtask</button>
                     </div>

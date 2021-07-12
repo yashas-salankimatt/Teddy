@@ -28,7 +28,7 @@ function CreateProjectPopup({trigger=false, setTrig, updateParentData}) {
         if (dueTimeStr){
             date = new Date(dueDateStr+'T'+dueTimeStr+':00');
         }
-        console.log(date);
+        // console.log(date);
         setDueDate(fb.firestore.Timestamp.fromDate(date));
     }, [dueDateStr, dueTimeStr]);
 

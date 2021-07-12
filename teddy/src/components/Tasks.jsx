@@ -133,7 +133,7 @@ function Tasks({projData, deleteProjFunction}) {
                     <ul className='TasksList'>
                         {tasks.map((element) => (
                             // <li key={element.taskID}>{element.taskName}</li>
-                            <Subtasks taskData={{element}} deleteTaskFunction={deleteTaskState}></Subtasks>
+                            <Subtasks taskData={{element}} deleteTaskFunction={deleteTaskState} key={element.taskID}></Subtasks>
                         ))}
                     </ul>
                 </div>}
