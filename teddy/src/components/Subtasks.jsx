@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import {deleteSubtask, createSubtask} from '../utils/FirestoreConfig';
 import './Subtasks.css';
 import EditTaskPopup from './EditTaskPopup'
-// import Subtask from './Subtask'
+import Subtask from './Subtask'
 import CreateSubtaskPopup from './CreateSubtaskPopup'
 
 function Subtasks({taskData, deleteTaskFunction}) {
@@ -122,7 +122,8 @@ function Subtasks({taskData, deleteTaskFunction}) {
                     </div>
                     <ul className='SubtasksList'>
                         {subtasks.map((element) => (
-                            <li key={element.subtaskID}>{element.subtaskName}</li>
+                            // <li key={element.subtaskID}>{element.subtaskName}</li>
+                            <Subtask subtaskData={{element}} deleteSubtaskFunction={deleteSubtaskState} key={element.subtaskID}></Subtask>
                         ))}
                     </ul>
                 </div>}
