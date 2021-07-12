@@ -1,8 +1,9 @@
 import React, {useEffect, useState} from 'react';
-import { deleteTask} from '../utils/FirestoreConfig';
+import { deleteTask, createTask} from '../utils/FirestoreConfig';
 import './Tasks.css';
 import EditProjectPopup from './EditProjectPopup';
-import {fb} from '../utils/FirebaseConfig';
+import Subtasks from './Subtasks';
+import CreateTaskPopup from './CreateTaskPopup';
 
 function Tasks({projData, deleteProjFunction}) {
     // var tasks = [];
@@ -14,10 +15,30 @@ function Tasks({projData, deleteProjFunction}) {
     // const [taskState, setTaskState] = useState([]);
     const [showChildren, setShowChildren] = useState(false);
     const [showEditProjPopup, setShowEditPopup] = useState(false);
+    const [showCreateTaskPopup, setCreateTaskPopup] = useState(false);
 
-    // TODO IMPLEMENT CREATE TASK POPUP
-    const createTask = ({taskName}) => {
-
+    const createTaskFunc = ({newTaskData}) => {
+        createTask({
+            taskName: newTaskData.taskName,
+            dueDate: newTaskData.dueDate,
+            projDoc: projDoc,
+            minutesNeeded: newTaskData.minutesNeeded,
+            description: newTaskData.description,
+            completed: newTaskData.completed
+        }).then(async (taskRef) => {
+            if (taskRef){
+                var tempTasks = tasks.concat();
+                tempTasks.push({
+                    taskID: taskRef.id,
+                    taskDoc: taskRef,
+                    taskName: newTaskData.taskName,
+                    description: newTaskData.description,
+                    completed: newTaskData.completed,
+                    dueDate: newTaskData.dueDate
+                });
+                setTasks(tempTasks);
+            }
+        });
     };
 
     const deleteTaskState = ({taskID=null, taskName=null}) => {
@@ -25,7 +46,7 @@ function Tasks({projData, deleteProjFunction}) {
             taskID = retID;
         });
 
-        var tempTasks = tasks;
+        var tempTasks = tasks.concat();
         const findInd = tempTasks.findIndex((element) => {
             return (element.taskID === taskID || element.taskName === taskName);
         })
@@ -57,14 +78,14 @@ function Tasks({projData, deleteProjFunction}) {
                         console.log("No tasks for project " + projectName);
                         return;
                     }
-                    var tempTasks = tasks;
+                    var tempTasks = tasks.concat();
                     snapshot.forEach((task) => {
                         tempTasks.push({
                             taskID: task.id,
                             taskDoc: task.ref,
                             taskName: task.data().taskName,
                             description: task.data().description,
-                            complete: task.data().completed,
+                            completed: task.data().completed,
                             dueDate: task.data().dueDate
                         });
                     });
@@ -103,8 +124,9 @@ function Tasks({projData, deleteProjFunction}) {
                 <EditProjectPopup trigger={showEditProjPopup} setTrig={setShowEditPopup} projData={projData} updateParentData={updateProjData}></EditProjectPopup>
                 {showChildren && <div>
                     <div className='CreateTaskWrapper'>
+                        <CreateTaskPopup trigger={showCreateTaskPopup} setTrig={setCreateTaskPopup} updateParentData={createTaskFunc}></CreateTaskPopup>
                         <h4 className='m-2'>Tasks</h4>
-                        <button className='btn btn-secondary m-1'>Create Task</button>
+                        <button className='btn btn-secondary m-1' onClick={() => {setCreateTaskPopup(true)}}>Create Task</button>
                     </div>
                     <ul className='TasksList'>
                         {tasks.map((element) => (

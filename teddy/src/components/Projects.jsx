@@ -18,30 +18,31 @@ function Projects ({catData, deleteCatFunc}) {
     const [showEditCatPopup, setShowEditPopup] = useState(false);
     const [showCreateProjPopup, setCreateProjPopup] = useState(false);
 
-    // TODO IMPLEMENT CREATE PROJECT POPUP
+    
     const createProj = ({newProjData}) => {
-        console.log(newProjData);
+        // console.log(newProjData);
         createProject({
             projectName: newProjData.projectName,
             dueDate: newProjData.dueDate,
             catDoc: catDoc,
             description: newProjData.description,
             completed: newProjData.completed
-        }).then((projRef) => {
-            var tempProjects = projects.concat();
-            console.log(tempProjects);
-            tempProjects.push({
-                projectID: projRef.id,
-                projDoc: projRef,
-                projectName: newProjData.projectName,
-                dueDate: newProjData.dueDate,
-                description: newProjData.description,
-                completed: newProjData.completed
-            });
-            console.log(tempProjects);
-            setProjects(tempProjects);
+        }).then(async (projRef) => {
+            if (projRef){
+                var tempProjects = projects.concat();
+                // console.log(tempProjects);
+                tempProjects.push({
+                    projectID: projRef.id,
+                    projDoc: projRef,
+                    projectName: newProjData.projectName,
+                    dueDate: newProjData.dueDate,
+                    description: newProjData.description,
+                    completed: newProjData.completed
+                });
+                console.log(tempProjects);
+                setProjects(tempProjects);
+            }
         });
-
     };
 
     const deleteProj = ({projectID=null, projectName=null}) => {
@@ -138,9 +139,9 @@ function Projects ({catData, deleteCatFunc}) {
                 <button className='EditButton btn btn-secondary' onClick={() => {setShowEditPopup(true)}}>Edit</button>
                 <button className='DeleteButton btn btn-secondary' onClick={() => {deleteCatFunc({categoryID: catDoc.id})}}>Delete</button>
                 <EditCategoryPopup trigger={showEditCatPopup} setTrig={setShowEditPopup} catData={catData} updateParentData={updateCatData}></EditCategoryPopup>
-                <CreateProjectPopup trigger={showCreateProjPopup} setTrig={setCreateProjPopup} updateParentData={createProj}></CreateProjectPopup>
                 {showChildren &&  <div>
                     <div className='CreateProjectWrapper'>
+                        <CreateProjectPopup trigger={showCreateProjPopup} setTrig={setCreateProjPopup} updateParentData={createProj}></CreateProjectPopup>
                         <h4 className='m-2'>Projects</h4>
                         <button className='btn btn-secondary m-1' onClick={() => {setCreateProjPopup(true)}}>Create Project</button>
                         

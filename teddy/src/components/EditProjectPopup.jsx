@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { fb } from '../utils/FirebaseConfig';
-import './EditProjectPopup.css';
+import './Popup.css';
 
 function EditProjectPopup({trigger=false, projData, setTrig, updateParentData}) {
     const [projDocData, setProjDocData] = useState();

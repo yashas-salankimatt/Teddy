@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import './EditCategoryPopup.css';
+import './Popup.css';
 
 function EditCategoryPopup({trigger=false, catData, setTrig, updateParentData}) {
     const [catDocData, setCatDocData] = useState();

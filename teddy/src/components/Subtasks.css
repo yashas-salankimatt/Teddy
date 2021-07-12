@@ -1,0 +1,46 @@
+.TaskItem {
+    display: flex;
+    flex-direction: row;
+    width:max-content;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    /* justify-content: center;
+    align-content: center; */
+    /* outline-width: 5px;
+    outline-color: black;
+    outline-style:dashed; */
+}
+
+.TaskListItem {
+    justify-content: end;
+    list-style-image: url("../icons/arrow-right.svg");
+    font-size:90%;
+    font-weight: bold;
+}
+
+.EditButton {
+    height: min-content;
+    justify-content:end;
+    margin-right: 5px;
+    margin-left: 5px;
+    /* align-self: flex-end; */
+}
+
+.DeleteButton {
+    margin-left: 5px;
+    margin-right:5px;
+    height: min-content;
+    justify-content:end;
+    /* align-self: flex-end; */
+}
+
+.CreateSubtaskWrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    align-content: center;
+}
+
+.TasksList {
+    text-align: start;
+}

@@ -1,31 +1,34 @@
-import React, { useEffect, useState } from 'react';
-import { fb } from '../utils/FirebaseConfig';
+import React, {useEffect, useState} from 'react';
+import {fb} from '../utils/FirebaseConfig';
 import './Popup.css';
 
-function CreateProjectPopup({trigger=false, setTrig, updateParentData}) {
-    const [projName, setName] = useState('');
+function CreateTaskPopup({trigger=false, setTrig, updateParentData}) {
+    const [taskName, setName] = useState('');
     const [completed, setCompleted] = useState(false);
     const [description, setDescription] = useState('');
     const [dueDate, setDueDate] = useState();
+    const [minsNeeded, setMinsNeeded] = useState(0);
 
 
-    const [dueDateStr, setDueDateStr] = useState();
-    const [dueTimeStr, setDueTimeStr] = useState();
+    const [dueDateStr, setDueDateStr] = useState('');
+    const [dueTimeStr, setDueTimeStr] = useState('');
 
-    const createProj = () => {
-        const updateProjData = {
-            projectName: projName,
+    const createTask = () => {
+        const updateTaskData = {
+            taskName: taskName,
             completed: completed,
             description: description,
-            dueDate: dueDate
+            dueDate: dueDate,
+            minutesNeeded: minsNeeded
         };
-        updateParentData({newProjData:updateProjData});
+        updateParentData({newTaskData:updateTaskData});
         setTrig(false);
     };
 
     useEffect(() => {
+        console.log(dueDateStr, dueTimeStr);
         var date = new Date(dueDateStr+'T00:00:00');
-        if (dueTimeStr){
+        if (dueTimeStr.length === 5) {
             date = new Date(dueDateStr+'T'+dueTimeStr+':00');
         }
         console.log(date);
@@ -36,9 +39,9 @@ function CreateProjectPopup({trigger=false, setTrig, updateParentData}) {
         <div className='popup'>
             <div className='popup-inner'>
                 <button className='close-btn btn btn-secondary' onClick={() => {setTrig(false)}}>Close</button>
-                <h3>Create Project</h3>
+                <h3>Create Task</h3>
                 <div className='EditableField'>
-                    <h5 className='m-1'>Project Name: </h5>
+                    <h5 className='m-1'>Task Name: </h5>
                     <form>
                         <input className='form-control' type='text' onChange={(event) => {setName(event.target.value)}}></input>
                     </form>
@@ -56,16 +59,22 @@ function CreateProjectPopup({trigger=false, setTrig, updateParentData}) {
                     </form>
                 </div>
                 <div className='EditableField'>
+                    <h5 className='m-1'>Minutes Needed: </h5>
+                    <form>
+                        <input className='form-control' type='number' onChange={(event) => {setMinsNeeded(event.target.value)}}></input>
+                    </form>
+                </div>
+                <div className='EditableField'>
                     <h5 className='m-1'>Due Date: </h5>
                     <form>
                         <input type='date' onChange={(event) => {setDueDateStr(event.target.value)}}></input>
                         <input type='time' onChange={(event) => {setDueTimeStr(event.target.value)}}></input>
                     </form>
                 </div>
-                <button className='btn btn-secondary' onClick={() => {createProj()}}>Save Changes</button>
+                <button className='btn btn-secondary' onClick={() => {createTask()}}>Save Changes</button>
             </div>            
         </div>
     ) : "";
 }
 
-export default CreateProjectPopup;
+export default CreateTaskPopup;
