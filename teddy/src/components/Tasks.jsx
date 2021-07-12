@@ -6,9 +6,6 @@ import Subtasks from './Subtasks';
 import CreateTaskPopup from './CreateTaskPopup';
 
 function Tasks({projData, deleteProjFunction}) {
-    // var tasks = [];
-    var currTaskName = null;
-
     const [tasks, setTasks] = useState([]);
     const [projDoc, setProjDoc] = useState(null);
     const [projectName, setProjName] = useState("");
@@ -25,7 +22,7 @@ function Tasks({projData, deleteProjFunction}) {
             minutesNeeded: newTaskData.minutesNeeded,
             description: newTaskData.description,
             completed: newTaskData.completed
-        }).then(async (taskRef) => {
+        }).then((taskRef) => {
             if (taskRef){
                 var tempTasks = tasks.concat();
                 tempTasks.push({
@@ -48,8 +45,8 @@ function Tasks({projData, deleteProjFunction}) {
 
         var tempTasks = tasks.concat();
         const findInd = tempTasks.findIndex((element) => {
-            return (element.taskID === taskID || element.taskName === taskName);
-        })
+            return (element.taskID === taskID);
+        });
         if (findInd >= 0){
             tempTasks.splice(findInd, 1);
         }
@@ -58,15 +55,20 @@ function Tasks({projData, deleteProjFunction}) {
     };
 
     useEffect(() => {
-        // getProjDoc({categoryID: catID, projectID: projID}).then((ret) => {
-        //     setProjDoc(ret);
-        // });
+        // setTasks([]);
         setProjDoc(projData.element.projDoc);
         setProjName(projData.element.projectName);
     }, []);
 
     useEffect(() => {
+        // setTasks([]);
+        setProjDoc(projData.element.projDoc);
+        setProjName(projData.element.projectName);
+    }, [projData]);
+
+    useEffect(() => {
         // tasks = [];
+        setTasks([]);
         if (projDoc){
             // projDoc.get().then((retDoc) => {
             //     setProjName(retDoc.data().projectName);
@@ -130,7 +132,8 @@ function Tasks({projData, deleteProjFunction}) {
                     </div>
                     <ul className='TasksList'>
                         {tasks.map((element) => (
-                            <li key={element.taskID}>{element.taskName}</li>
+                            // <li key={element.taskID}>{element.taskName}</li>
+                            <Subtasks taskData={{element}} deleteTaskFunction={deleteTaskState}></Subtasks>
                         ))}
                     </ul>
                 </div>}

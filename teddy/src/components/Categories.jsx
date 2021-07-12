@@ -11,6 +11,7 @@ var currCatName = null;
 function Categories(props) {
     // const [catState, setCatState] = useState([]);
     const [categories, setCategories] = useState([]);
+    const [userDoc, setUserDoc] = useState(null);
     
     const createCat = async ({categoryName, archived=false}) => {
         var catDoc = await createCategory({categoryName, archived});
@@ -47,25 +48,10 @@ function Categories(props) {
         }
         console.log(tempCategories);
         setCategories(tempCategories);
-        // setCategories((prevCategories) => {
-        //     const findInd = prevCategories.findIndex((element) => {
-        //         return element.categoryID === categoryID;
-        //     });
-        //     if (findInd >= 0){
-        //         prevCategories.splice(findInd, 1);
-        //     }
-        //     return prevCategories;
-        // })
-        // setCatState(categories.map((cat) => cat.categoryID));
-        // setCatState(tempState);
-        // console.log(categories);
-        // console.log(catState);
     };
 
     // called on mount to populate for categories
     useEffect(() => {
-        // console.log("Mounted");
-        // categories = [];
         setCategories([]);
         async function fetchData() {
             const user = auth.currentUser;

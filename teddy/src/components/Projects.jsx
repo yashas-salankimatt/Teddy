@@ -7,9 +7,6 @@ import './Projects.css';
 
 
 function Projects ({catData, deleteCatFunc}) {
-    // console.log(catData);
-    var currProjName = null;
-
     const [projects, setProjects] = useState([]);
     const [catDoc, setCatDoc] = useState(null);
     const [categoryName, setCatName] = useState("");
@@ -64,11 +61,13 @@ function Projects ({catData, deleteCatFunc}) {
     };
 
     useEffect(() => {
+        setProjects([]);
         setCatDoc(catData.element.catDoc);
         setCatName(catData.element.categoryName);
     }, []);
 
     useEffect(() => {
+        setProjects([]);
         setCatDoc(catData.element.catDoc);
         setCatName(catData.element.categoryName);
     }, [catData]);
@@ -116,10 +115,6 @@ function Projects ({catData, deleteCatFunc}) {
     //     console.log(projState);
     // }, [projState]);
 
-    const projectInputHandler = (event) => {
-        currProjName = event.target.value;
-    };
-
     function updateCatData ({newCatData}) {
         setCatName(newCatData.categoryName);
         catData.element.categoryName = newCatData.categoryName;
@@ -144,7 +139,6 @@ function Projects ({catData, deleteCatFunc}) {
                         <CreateProjectPopup trigger={showCreateProjPopup} setTrig={setCreateProjPopup} updateParentData={createProj}></CreateProjectPopup>
                         <h4 className='m-2'>Projects</h4>
                         <button className='btn btn-secondary m-1' onClick={() => {setCreateProjPopup(true)}}>Create Project</button>
-                        
                     </div>
                     <ul className='ProjectsList'>
                         {projects.map((element) => (
