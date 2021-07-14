@@ -57,7 +57,3 @@
 .DropDownIcon.active {
     transform: rotate(45deg);
 }
-
-.ButtonsWrapper {
-    /* justify-self: flex-end; */
-}

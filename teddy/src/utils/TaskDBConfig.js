@@ -11,11 +11,6 @@ export const createDefaultDoc = async () => {
             try {
                 console.log("Attempting to create user doc since none exists");
                 userRef.set({displayName, email, uid});
-                // createCategory({
-                //     categoryName:"defaultCat", 
-                //     archived:true, 
-                //     defaultCat:true
-                // });
             } catch (error) {
                 console.error("Error creating default doc for user");
             }
@@ -33,15 +28,6 @@ export const createCategory = ({categoryName, archived=false}) => {
         categoriesRef.set({
             categoryName, archived
         });
-        // console.log(categoriesRef.id);
-        // createProject({
-        //     projectName:"defaultProj", 
-        //     completed: true,
-        //     // dueDate: fb.firestore.Timestamp.fromDate(new Date('July 23, 2021')),
-        //     dueDate: null,
-        //     catDoc: categoriesRef,
-        //     defaultProj:true
-        // });
         return categoriesRef;
     } catch(error) {
         console.log("Error in trying to create category");
@@ -57,15 +43,6 @@ export const createProject = async ({projectName, dueDate, catDoc, description=n
         projectsRef.set({
             projectName, completed, dueDate, description
         });
-        // console.log(projectsRef.id); 
-        // createTask({
-        //     taskName: "defaultTask",
-        //     completed: true,
-        //     // dueDate: fb.firestore.Timestamp.fromDate(new Date('July 22, 2021')),
-        //     dueDate: null,
-        //     projDoc: projectsRef,
-        //     defaultTask:true
-        // });
         return projectsRef;
     } catch(error) {
         console.log("Error in trying to create project");
@@ -81,14 +58,6 @@ export const createTask = async ({taskName, dueDate, projDoc, minutesNeeded=null
         tasksRef.set({
             taskName, completed, dueDate, description
         });
-        // console.log(tasksRef.id);
-        // createSubtask({
-        //     subtaskName: "defaultSubtask",
-        //     completed: true,
-        //     minutesNeeded: 0,
-        //     defaultSubtask: true,
-        //     taskDoc: tasksRef
-        // });
         if (minutesNeeded){
             createSubtask({
                 subtaskName: taskName + " - General",
@@ -111,7 +80,6 @@ export const createSubtask = async ({subtaskName, minutesNeeded, taskDoc, descri
         subtasksRef.set({
             subtaskName, completed, minutesNeeded, description
         });
-        // console.log(subtasksRef.id);
         return subtasksRef;
     } catch(error) {
         console.log("Error in trying to create subtask");
@@ -142,7 +110,6 @@ export const getCatDoc = async ({categoryName=null, categoryID=null}) => {
             console.log('More than one category of this name');
         }
         const retRef = await snapshot.docs[0].ref;
-        // console.log(retRef.id);
         return retRef;
     } catch(error) {
         console.log("Error in trying to get category doc");
@@ -177,7 +144,6 @@ export const getProjDoc = async ({catDoc=null, categoryName=null, categoryID=nul
             return null;
         }
         const retRef = await snapshot.docs[0].ref;
-        // console.log(retRef.id);
         return retRef;
     } catch(error) {
         console.log("Error in trying to get project ID");
@@ -197,7 +163,6 @@ export const getTaskDoc = async ({catDoc=null, categoryName=null, categoryID=nul
     if (projectName && !projDoc){
         projDoc = await getProjDoc({catDoc, projectName});
     } else if (projectID && !projDoc){
-        // console.log(projectID);
         projDoc = await getProjDoc({catDoc, projectID});
     }
     projDoc = await projDoc;
@@ -220,7 +185,6 @@ export const getTaskDoc = async ({catDoc=null, categoryName=null, categoryID=nul
             return null;
         }
         const retRef = await snapshot.docs[0].ref;
-        // console.log(retRef.id);
         return retRef;
     } catch(error) {
         console.log("Error in trying to get task ID");
@@ -282,10 +246,8 @@ export const getSubtaskDoc = async ({catDoc=null, categoryName=null, categoryID=
 
 export const deleteCategory = async ({categoryName=null, categoryID=null}) => {
     try{
-        // console.log(categoryName);
         var retID = null;
         getCatDoc({categoryName, categoryID}).then((catDoc) => {
-            // catDoc = await catDoc;
             retID = catDoc.id;
             catDoc.collection("projects").get().then((projectsDocs) => {
                 if (projectsDocs.empty){
@@ -315,7 +277,6 @@ export const deleteCategory = async ({categoryName=null, categoryID=null}) => {
                 }
             });
             catDoc.delete();
-            // console.log(retID);
         });
         return retID;
     } catch(error) {
@@ -361,7 +322,6 @@ export const deleteProject = async ({catDoc, projectName=null, projectID=null}) 
 };
 
 
-// TODO: TEST IF THIS WORKS
 export const deleteTask = async({projDoc, taskName=null, taskID=null}) => {
     try{
         projDoc = await projDoc;
@@ -387,7 +347,7 @@ export const deleteTask = async({projDoc, taskName=null, taskID=null}) => {
     return null;
 };
 
-// TODO: MAKE SURE THIS WORKS
+
 export const deleteSubtask = async ({taskDoc, subtaskName=null, subtaskID=null}) => {
     try {
         taskDoc = await taskDoc;
