@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import {deleteSubtask, createSubtask} from '../utils/FirestoreConfig';
 import './Subtasks.css';
-import EditTaskPopup from './EditTaskPopup'
-import Subtask from './Subtask'
-import CreateSubtaskPopup from './CreateSubtaskPopup'
+import EditTaskPopup from './EditTaskPopup';
+import Subtask from './Subtask';
+import CreateSubtaskPopup from './CreateSubtaskPopup';
+import DropDownIcon from '../icons/caret-right-fill.svg';
 
 function Subtasks({taskData, deleteTaskFunction}) {
     const [subtasks, setSubtasks] = useState([]);
@@ -107,10 +108,8 @@ function Subtasks({taskData, deleteTaskFunction}) {
     return (
         <div className='TaskItem'>
             {taskDoc && <li className='TaskListItem' key={taskDoc.id}>
+                <img className={"DropDownIcon " + (showChildren ? 'active' : '')} src={DropDownIcon} onClick={() => {setShowChildren(!showChildren)}} alt=">"/>
                 {taskName}
-                <button className='EditButton btn btn-secondary' onClick={() => {
-                    setShowChildren(!showChildren);
-                }}>Show/Hide Subtasks</button>
                 <button className='EditButton btn btn-secondary' onClick={() => {setShowEditPopup(true)}}>Edit</button>
                 <button className='DeleteButton btn btn-secondary' onClick={() => {deleteTaskFunction({taskID: taskDoc.id})}}>Delete</button>
                 <EditTaskPopup trigger={showEditTaskPopup} setTrig={setShowEditPopup} taskData={taskData} updateParentData={updateTaskData}></EditTaskPopup>

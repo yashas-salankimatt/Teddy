@@ -4,6 +4,7 @@ import Tasks from './Tasks';
 import EditCategoryPopup from './EditCategoryPopup';
 import CreateProjectPopup from './CreateProjectPopup';
 import './Projects.css';
+import DropDownIcon from '../icons/caret-right-fill.svg';
 
 
 function Projects ({catData, deleteCatFunc}) {
@@ -17,7 +18,6 @@ function Projects ({catData, deleteCatFunc}) {
 
     
     const createProj = ({newProjData}) => {
-        // console.log(newProjData);
         createProject({
             projectName: newProjData.projectName,
             dueDate: newProjData.dueDate,
@@ -36,7 +36,6 @@ function Projects ({catData, deleteCatFunc}) {
                     description: newProjData.description,
                     completed: newProjData.completed
                 });
-                console.log(tempProjects);
                 setProjects(tempProjects);
             }
         });
@@ -66,21 +65,17 @@ function Projects ({catData, deleteCatFunc}) {
         setCatName(catData.element.categoryName);
     }, []);
 
+    // useEffect(() => {
+    //     setProjects([]);
+    //     setCatDoc(catData.element.catDoc);
+    //     setCatName(catData.element.categoryName);
+    // }, [catData]);
+
     useEffect(() => {
         setProjects([]);
         setCatDoc(catData.element.catDoc);
         setCatName(catData.element.categoryName);
-    }, [catData]);
-
-    useEffect(() => {
-        // projects = [];
-        setProjects([]);
-        // console.log("Reset projects");
         if (catDoc){
-            // catDoc.get().then((retDoc) => {
-            //     setCatName(retDoc.data().categoryName);
-            //     // console.log(retDoc.data());
-            // });
             async function fetchData() {
                 try {
                     const snapshot = await catDoc.collection("projects").get();
@@ -100,7 +95,6 @@ function Projects ({catData, deleteCatFunc}) {
                         });
                     });
                     setProjects(tempProjects);
-                    // setProjState(projects.map((proj) => proj.projectID));
                 } catch (error) {
                     console.log("Error in trying to get projects for category " + categoryName);
                     console.log(error);
@@ -108,12 +102,27 @@ function Projects ({catData, deleteCatFunc}) {
             }
             fetchData();
         }
-    }, [catDoc]);
+    }, [catDoc, catData]);
 
-    // useEffect(() => {
-    //     console.log(projects);
-    //     console.log(projState);
-    // }, [projState]);
+    useEffect(() => {
+        var newProjects = [];
+        var diff = false;
+        projects.forEach((project) => {
+            var found = false;
+            newProjects.forEach((newProj) => {
+                if (newProj.projectID === project.projectID){
+                    found = true;
+                    diff = true;
+                }
+            });
+            if (!found) {
+                newProjects.push(project);
+            }
+        });
+        if (diff){
+            setProjects(newProjects);
+        }
+    }, [projects]);
 
     function updateCatData ({newCatData}) {
         setCatName(newCatData.categoryName);
@@ -125,29 +134,30 @@ function Projects ({catData, deleteCatFunc}) {
     // - Add checkboxes to the projects list view- this is most likely going to be in the tasks.jsx file though
     // - Add date due view to the projects list view- this is also most likely going to be in the tasks.jsx file
     return (
-        <div className='CategoryItem'>
-            {catDoc && <li className='CategoryListItem' key={catDoc.id}>
-                {categoryName}
-                <button className='EditButton btn btn-secondary' onClick={() => {
-                    setShowChildren(!showChildren);
-                }}>Show/Hide Projects</button>
+        <div key={catData.element.categoryID}>
+            {catDoc && <div className='CategoryItem'>
+                <div>
+                    <img className={"DropDownIcon " + (showChildren ? 'active' : '')} src={DropDownIcon} onClick={() => {setShowChildren(!showChildren)}} alt=">"/>
+                </div>
+                <div className='CategoryListItem' key={catDoc.id}>
+                    {categoryName}
+                    <EditCategoryPopup trigger={showEditCatPopup} setTrig={setShowEditPopup} catData={catData} updateParentData={updateCatData}></EditCategoryPopup>
+                    {showChildren &&  <div>
+                        <div className='CreateProjectWrapper'>
+                            <CreateProjectPopup trigger={showCreateProjPopup} setTrig={setCreateProjPopup} updateParentData={createProj}></CreateProjectPopup>
+                            <h4 className='m-2'>Projects</h4>
+                            <button className='btn btn-secondary m-1' onClick={() => {setCreateProjPopup(true)}}>Create Project</button>
+                        </div>
+                        <ul className='ProjectsList' key={catData.element.categoryID}>
+                            {projects.map((element, index) => (
+                                <Tasks projData={{element}} deleteProjFunction={deleteProj} key={index}></Tasks>
+                            ))}
+                        </ul>
+                    </div>}
+                </div>
                 <button className='EditButton btn btn-secondary' onClick={() => {setShowEditPopup(true)}}>Edit</button>
                 <button className='DeleteButton btn btn-secondary' onClick={() => {deleteCatFunc({categoryID: catDoc.id})}}>Delete</button>
-                <EditCategoryPopup trigger={showEditCatPopup} setTrig={setShowEditPopup} catData={catData} updateParentData={updateCatData}></EditCategoryPopup>
-                {showChildren &&  <div>
-                    <div className='CreateProjectWrapper'>
-                        <CreateProjectPopup trigger={showCreateProjPopup} setTrig={setCreateProjPopup} updateParentData={createProj}></CreateProjectPopup>
-                        <h4 className='m-2'>Projects</h4>
-                        <button className='btn btn-secondary m-1' onClick={() => {setCreateProjPopup(true)}}>Create Project</button>
-                    </div>
-                    <ul className='ProjectsList'>
-                        {projects.map((element) => (
-                            // <li key={element}>{element}</li>
-                            <Tasks projData={{element}} deleteProjFunction={deleteProj} key={element.projectID}></Tasks>
-                        ))}
-                    </ul>
-                </div>}
-            </li>}
+            </div>}
         </div>
     );
 }

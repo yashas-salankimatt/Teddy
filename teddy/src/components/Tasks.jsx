@@ -4,6 +4,7 @@ import './Tasks.css';
 import EditProjectPopup from './EditProjectPopup';
 import Subtasks from './Subtasks';
 import CreateTaskPopup from './CreateTaskPopup';
+import DropDownIcon from '../icons/caret-right-fill.svg';
 
 function Tasks({projData, deleteProjFunction}) {
     const [tasks, setTasks] = useState([]);
@@ -61,7 +62,7 @@ function Tasks({projData, deleteProjFunction}) {
     }, []);
 
     useEffect(() => {
-        // setTasks([]);
+        setTasks([]);
         setProjDoc(projData.element.projDoc);
         setProjName(projData.element.projectName);
     }, [projData]);
@@ -115,29 +116,29 @@ function Tasks({projData, deleteProjFunction}) {
     };
 
     return (
-        <div className='ProjectItem'>
-            {projDoc && <li className='ProjectListItem' key={projDoc.id}>
-                {projectName}
-                <button className='EditButton btn btn-secondary' onClick={() => {
-                    setShowChildren(!showChildren);
-                }}>Show/Hide Tasks</button>
+        <div key={projData.element.projectID}>
+            {projDoc && <div className='ProjectItem'>
+                <img className={"DropDownIcon " + (showChildren ? 'active' : '')} src={DropDownIcon} onClick={() => {setShowChildren(!showChildren)}} alt=">"/>
+                <div className='ProjectListItem' key={projDoc.id}>
+                    {projectName}
+                    <EditProjectPopup trigger={showEditProjPopup} setTrig={setShowEditPopup} projData={projData} updateParentData={updateProjData}></EditProjectPopup>
+                    {showChildren && <div>
+                        <div className='CreateTaskWrapper'>
+                            <CreateTaskPopup trigger={showCreateTaskPopup} setTrig={setCreateTaskPopup} updateParentData={createTaskFunc}></CreateTaskPopup>
+                            <h4 className='m-2'>Tasks</h4>
+                            <button className='btn btn-secondary m-1' onClick={() => {setCreateTaskPopup(true)}}>Create Task</button>
+                        </div>
+                        <ul className='TasksList' key={projData.element.projectID}>
+                            {tasks.map((element) => (
+                                // <div key={element.taskID}>{element.taskName}</div>
+                                <Subtasks taskData={{element}} deleteTaskFunction={deleteTaskState} key={element.taskID}></Subtasks>
+                                ))}
+                        </ul>
+                    </div>}
+                </div>
                 <button className='EditButton btn btn-secondary' onClick={() => {setShowEditPopup(true)}}>Edit</button>
                 <button className='DeleteButton btn btn-secondary' onClick={() => {deleteProjFunction({projectID: projDoc.id})}}>Delete</button>
-                <EditProjectPopup trigger={showEditProjPopup} setTrig={setShowEditPopup} projData={projData} updateParentData={updateProjData}></EditProjectPopup>
-                {showChildren && <div>
-                    <div className='CreateTaskWrapper'>
-                        <CreateTaskPopup trigger={showCreateTaskPopup} setTrig={setCreateTaskPopup} updateParentData={createTaskFunc}></CreateTaskPopup>
-                        <h4 className='m-2'>Tasks</h4>
-                        <button className='btn btn-secondary m-1' onClick={() => {setCreateTaskPopup(true)}}>Create Task</button>
-                    </div>
-                    <ul className='TasksList'>
-                        {tasks.map((element) => (
-                            // <li key={element.taskID}>{element.taskName}</li>
-                            <Subtasks taskData={{element}} deleteTaskFunction={deleteTaskState} key={element.taskID}></Subtasks>
-                        ))}
-                    </ul>
-                </div>}
-            </li>}
+            </div>}
         </div>
     );
 }

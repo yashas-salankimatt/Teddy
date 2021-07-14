@@ -46,7 +46,7 @@ function ProfilePanel (props) {
                         type="button"
                         className="GeneralButton btn btn-secondary"
                     >
-                        Create thing
+                        Create temp data
                     </button>
                 </div>
                 <div>

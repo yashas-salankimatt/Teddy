@@ -3,10 +3,12 @@
     flex-direction: row;
     justify-content: center;
     align-content: center;
+    width: 100%;
 }
 
 .CategoriesList {
     text-align: start;
+    width: 100%;
 }
 
 .ScrollView {

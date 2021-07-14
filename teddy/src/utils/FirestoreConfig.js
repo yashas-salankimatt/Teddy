@@ -91,7 +91,7 @@ export const createTask = async ({taskName, dueDate, projDoc, minutesNeeded=null
         // });
         if (minutesNeeded){
             createSubtask({
-                subtaskName: "General",
+                subtaskName: taskName + " - General",
                 minutesNeeded,
                 taskDoc: tasksRef
             });

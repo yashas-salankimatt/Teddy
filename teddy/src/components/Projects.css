@@ -1,46 +1,63 @@
 .CategoryItem {
     display: flex;
     flex-direction: row;
-    width:max-content;
+    width: 100%;
     margin-top: 10px;
     margin-bottom: 10px;
-    /* justify-content: center;
-    align-content: center; */
-    /* outline-width: 5px;
-    outline-color: black;
-    outline-style:dashed; */
 }
 
 .CategoryListItem {
-    justify-content: end;
-    list-style-image: url("../icons/arrow-right.svg");
+    align-content: center;
+    /* justify-content: end; */
+    /* list-style-image: url("../icons/arrow-right.svg"); */
+    list-style: none;
     font-size:x-large;
     font-weight: bold;
+    width: 100%;
 }
 
 .EditButton {
     height: min-content;
-    justify-content:end;
     margin-right: 5px;
     margin-left: 5px;
-    /* align-self: flex-end; */
+    /* justify-self: flex-end; */
+    align-items: flex-end;
 }
 
 .DeleteButton {
     margin-left: 5px;
     margin-right:5px;
     height: min-content;
-    justify-content:end;
-    /* align-self: flex-end; */
+    /* justify-self: end;
+    justify-content: end;
+    justify-items: end;
+    align-items: flex-end; */
+    align-items: flex-end;
 }
 
 .CreateProjectWrapper {
     display: flex;
     flex-direction: row;
-    justify-content: start;
+    justify-content: flex-start;
     align-content: center;
 }
 
 .ProjectsList {
     text-align: start;
+}
+
+.DropDownIcon {
+    margin-top: 9px;
+    margin-right: 5px;
+    align-self:flex-start;
+    justify-self: flex-start;
+    cursor:pointer;
+}
+
+.DropDownIcon.active {
+    transform: rotate(45deg);
+}
+
+.ButtonsWrapper {
+    /* justify-self: flex-end; */
 }

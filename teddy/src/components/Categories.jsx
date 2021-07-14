@@ -11,7 +11,6 @@ var currCatName = null;
 function Categories(props) {
     // const [catState, setCatState] = useState([]);
     const [categories, setCategories] = useState([]);
-    const [userDoc, setUserDoc] = useState(null);
     
     const createCat = async ({categoryName, archived=false}) => {
         var catDoc = await createCategory({categoryName, archived});
@@ -38,15 +37,15 @@ function Categories(props) {
         // setCategories([]);
         
         var tempCategories = categories.concat();
-        console.log(tempCategories);
-        console.log(categories);
+        // console.log(tempCategories);
+        // console.log(categories);
         const findInd = tempCategories.findIndex((element) => {
             return (element.categoryID === categoryID || element.categoryName === categoryName);
         });
         if (findInd >= 0){
             tempCategories.splice(findInd, 1);
         }
-        console.log(tempCategories);
+        // console.log(tempCategories);
         setCategories(tempCategories);
     };
 
@@ -101,7 +100,7 @@ function Categories(props) {
                 </div>
                 <ul className='CategoriesList'>
                     {categories.map((element) => (
-                        <Projects catData={{element}} deleteCatFunc={deleteCat} key={element.catID}></Projects>
+                        <Projects catData={{element}} deleteCatFunc={deleteCat} key={element.categoryID}></Projects>
                     ))}
                 </ul>
             </div>
