@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {deleteSubtask, createSubtask} from '../utils/FirestoreConfig';
+import {deleteSubtask, createSubtask} from '../utils/TaskDBConfig';
 import './Subtasks.css';
 import EditTaskPopup from './EditTaskPopup';
 import Subtask from './Subtask';

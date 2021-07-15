@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { deleteProject, createProject} from '../utils/FirestoreConfig';
+import { deleteProject, createProject} from '../utils/TaskDBConfig';
 import Tasks from './Tasks';
 import EditCategoryPopup from './EditCategoryPopup';
 import CreateProjectPopup from './CreateProjectPopup';

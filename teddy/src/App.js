@@ -4,6 +4,7 @@ import {BrowserRouter as Router, Route} from 'react-router-dom'
 import UserProvider from './providers/UserProvider';
 
 function App() {
+
   return (
     <UserProvider>
       <Router>

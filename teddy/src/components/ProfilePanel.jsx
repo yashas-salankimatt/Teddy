@@ -1,9 +1,9 @@
 import React, { useContext } from 'react';
 import './ProfilePanel.css';
 import { UserContext } from '../providers/UserProvider';
-import { fb, signInWithGoogle, signOutWithGoogle } from "../utils/FirebaseConfig";
-import {createCategory, createProject, createTask} from "../utils/FirestoreConfig";
-
+import { fb} from "../utils/FirebaseConfig";
+import {createCategory, createProject, createTask} from "../utils/TaskDBConfig";
+import {getEvents, overallLogout, overallLogin} from '../utils/GCalAuthProvider';
 
 function ProfilePanel (props) {
     const user = useContext(UserContext);
@@ -51,13 +51,23 @@ function ProfilePanel (props) {
                 </div>
                 <div>
                     <button
-                        onClick={signOutWithGoogle}
+                        onClick={overallLogout}
                         type="button"
                         className="GeneralButton btn btn-secondary"
                     >
                         Sign Out
                     </button>
                 </div>
+                <div>
+                    <button
+                        onClick={getEvents}
+                        type="button"
+                        className="GeneralButton btn btn-secondary"
+                    >
+                        get events
+                    </button>
+                </div>
+                {/* <GCalAuthProvider></GCalAuthProvider> */}
             </div >
         );
     }
@@ -65,12 +75,13 @@ function ProfilePanel (props) {
     return (
         <div>
             <button
-                onClick={signInWithGoogle}
+                onClick={overallLogin}
                 type="button"
                 className="GeneralButton btn btn-secondary"
             >
                 Sign In with Google
             </button>
+            {/* <GCalAuthProvider></GCalAuthProvider> */}
         </div >
     );
 }

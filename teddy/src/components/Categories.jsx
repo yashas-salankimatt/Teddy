@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { auth, firestore } from '../utils/FirebaseConfig';
-import {createCategory, deleteCategory} from "../utils/FirestoreConfig";
+import {createCategory, deleteCategory} from "../utils/TaskDBConfig";
 import Projects from './Projects';
 import './Categories.css'
 
