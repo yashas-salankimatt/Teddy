@@ -4,7 +4,7 @@ import localizer from 'react-big-calendar/lib/localizers/moment';
 import moment from 'moment';
 import 'react-big-calendar/lib/sass/styles.scss';
 import './CalendarView.css';
-import { getEvents } from '../utils/GCalAuthProvider';
+import { getEvents } from '../utils/CalendarWrapper';
 
 const momentLocalizer = localizer(moment);
 

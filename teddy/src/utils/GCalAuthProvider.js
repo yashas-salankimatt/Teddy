@@ -40,26 +40,3 @@ export const overallLogin = async () => {
 export const overallLogout = async () => {
   fb.auth().signOut();
 };
-
-export const getEvents = async () => {
-  var retEvents = [];
-  var response = await window.gapi.client.calendar.events.list({
-    calendarId: 'primary',
-    timeMin: new Date().toISOString(),
-    maxResults: 10,
-    singleEvents: true,
-    orderBy: 'startTime'
-  });
-  console.log(response.result.items);
-    response.result.items.forEach(element => {
-      console.log(element.summary);
-      retEvents.push({
-        id: retEvents.length,
-        title: element.summary,
-        start: new Date(element.start.dateTime),
-        end: new Date(element.end.dateTime)
-      });
-    });
-    console.log(retEvents);
-    return retEvents;
-};
