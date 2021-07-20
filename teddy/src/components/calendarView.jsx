@@ -30,7 +30,7 @@ function CalendarView(props) {
                 });
                 setEvents(tempEvents);
             }}>Add event</button>
-            <button className='btn btn-secondary' onClick={async () => {
+            <button className='btn btn-secondary m-1' onClick={async () => {
                 var tempEvents = await getEvents();
                 console.log(tempEvents);
                 if (tempEvents.length > 0){

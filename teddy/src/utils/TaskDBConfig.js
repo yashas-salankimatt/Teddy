@@ -11,6 +11,14 @@ export const createDefaultDoc = async () => {
             try {
                 console.log("Attempting to create user doc since none exists");
                 userRef.set({displayName, email, uid});
+                userRef.collection("prefs").doc("workPrefs").set({
+                    prefDuration: 60,
+                    workStart: "08:00",
+                    workEnd: "17:00"
+                });
+                userRef.collection("prefs").doc("calendarPrefs").set({
+                    calendarIDs: []
+                });
             } catch (error) {
                 console.error("Error creating default doc for user");
             }

@@ -10,7 +10,7 @@ function initAPI() {
       apiKey: "AIzaSyCdCXBfkNdvHTZHnex5rj2t4kROUX1vYy0",
       clientId: "112181817782-25lcd3tcchbucd8do9kq20d13q65ht7d.apps.googleusercontent.com",
       discoveryDocs: ['https://calendar-json.googleapis.com/$discovery/rest?version=v3'],
-      scope: 'https://www.googleapis.com/auth/calendar.events'
+      scope: 'https://www.googleapis.com/auth/calendar'
     });
     window.gapi.client.load('calendar', 'v3', () => {
       console.log("loaded calendar api");
@@ -50,7 +50,7 @@ export const getEvents = async () => {
     singleEvents: true,
     orderBy: 'startTime'
   });
-  console.log(response.result.items);
+  // console.log(response.result.items);
     response.result.items.forEach(element => {
       console.log(element.summary);
       retEvents.push({
@@ -60,6 +60,6 @@ export const getEvents = async () => {
         end: new Date(element.end.dateTime)
       });
     });
-    console.log(retEvents);
+    // console.log(retEvents);
     return retEvents;
 };
