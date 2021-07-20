@@ -12,14 +12,13 @@ function CalendarView(props) {
     const [events, setEvents] = useState([]);
     const calendarList = [
         {id: 1, calendarId :"i59v4sa7k8cs3jgghsng9smbmc@group.calendar.google.com"},
-        // {calendarId :"0m10lko6fgtk8kodr5tm3nveeg@group.calendar.google.com"},
+        // {id: 2, calendarId :"0m10lko6fgtk8kodr5tm3nveeg@group.calendar.google.com"},
         // {calendarId :"derekhe99@gmail.com"},
-        {id: 2, calendarId :'primary'},
+        {id: 3, calendarId :'primary'},
     ];
+    var tempEventsList = [];
 
-    useEffect(() => {
-        console.log(events);
-    }, [events]);
+
 
     return (
         <div className='ParentView'>
@@ -37,6 +36,7 @@ function CalendarView(props) {
                 setEvents(tempEvents);
             }}>Add event</button>
             <button className='btn btn-secondary' onClick={() => {
+
                 calendarList.forEach(async (calendar) => {
                     var tempEvents = getEvents(calendar.calendarId);
                     tempEvents = await tempEvents;
@@ -44,11 +44,23 @@ function CalendarView(props) {
                     console.log(tempEvents.length);
 
                     if (tempEvents.length > 0){
-                        // setEvents([...events, {tempEvents}]);
-                        setEvents(tempEvents);
+                        console.log('success');
+                        //tempEventsList.concat(tempEvents);
+                        tempEventsList.push(...tempEvents);
+                        console.log(tempEventsList);
+                        console.log(tempEventsList.length);
+
+                        setEvents(tempEventsList);
+                        console.log(events);
+                    }
+                    else{
+                        setEvents(tempEventsList);
+                        console.log(events);
+
                     }
                 });
                 
+
                 // getEvents({calendarList, setEvents});
                 // tempEvents = await tempEvents;
                 // console.log(tempEvents);

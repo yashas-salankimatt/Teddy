@@ -81,13 +81,12 @@ export const getEvents = async (calendarId) => {
       response.result.items.forEach(element => {
         console.log(element.summary);
         retEvents.push({
-          id: retEvents.length,
+          id: calendarId+retEvents.length,
           title: element.summary,
           start: new Date(element.start.dateTime),
           end: new Date(element.end.dateTime)
         });
       });
-      console.log(retEvents);
       return retEvents;
   };
 
