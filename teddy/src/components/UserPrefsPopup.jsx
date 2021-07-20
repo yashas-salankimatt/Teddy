@@ -29,7 +29,7 @@ function UserPrefsPopup({trigger=false, setTrig}) {
                         if (calendarID === calendar.id){
                             calendar.checked = true;
                         }
-                    })
+                    });
                 });
                 setCalendars(tempCalendarItems);
             }

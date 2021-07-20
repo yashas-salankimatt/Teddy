@@ -4,12 +4,37 @@ import localizer from 'react-big-calendar/lib/localizers/moment';
 import moment from 'moment';
 import 'react-big-calendar/lib/sass/styles.scss';
 import './CalendarView.css';
-import { getEvents } from '../utils/GCalAuthProvider';
+import { getEvents } from './CalendarWrapper';
+import { auth, firestore } from '../utils/FirebaseConfig';
+import { initAPI } from '../utils/GCalAuthProvider';
 
 const momentLocalizer = localizer(moment);
 
-function CalendarView(props) {
+export function CalendarView(props) {
     const [events, setEvents] = useState([]);
+
+    async function populate() {
+        if (auth.currentUser !== null && window.gapi.client.calendar){
+            var tempEvents = await getEvents();
+            // console.log(tempEvents);
+            if (tempEvents.length > 0){
+                setEvents(tempEvents);
+            }
+        }
+    }
+
+    function attemptPopulate() {
+        if (window.gapi.client.calendar === undefined){
+            setTimeout(attemptPopulate, 500);
+            return;
+        }
+        // console.log(window.gapi.client.calendar);
+        populate();
+    }
+
+    useEffect(() => {
+        attemptPopulate();
+    }, []);
 
     useEffect(() => {
         console.log(events);
@@ -31,18 +56,14 @@ function CalendarView(props) {
                 setEvents(tempEvents);
             }}>Add event</button>
             <button className='btn btn-secondary m-1' onClick={async () => {
-                var tempEvents = await getEvents();
-                console.log(tempEvents);
-                if (tempEvents.length > 0){
-                    setEvents(tempEvents);
-                }
+                populate();
             }}>Populate Cal</button>
             <div className='ScrollView'>
                 <div>
                     <Calendar
                         localizer={momentLocalizer}
                         events={events}
-                        defaultView='day'
+                        defaultView='week'
                         views={['week', 'day', 'agenda']}
                     />
                 </div>
@@ -50,14 +71,5 @@ function CalendarView(props) {
         </div>
     );
 }
-
-var eventsExt = [
-    {
-      id: 1,
-      title: 'Today',
-      start: new Date(new Date().setHours(new Date().getHours() - 3)),
-      end: new Date(new Date().setHours(new Date().getHours() + 3)),
-    },
-  ];
 
 export default CalendarView;
