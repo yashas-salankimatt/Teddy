@@ -4,7 +4,7 @@ import { UserContext } from '../providers/UserProvider';
 import { fb} from "../utils/FirebaseConfig";
 import {createCategory, createProject, createTask} from "../utils/TaskDBConfig";
 import { overallLogout, overallLogin} from '../utils/GCalAuthProvider';
-import { getEvents } from '../utils/CalendarWrapper';
+import { getEvents, getCalendarIds } from '../utils/CalendarWrapper';
 
 function ProfilePanel (props) {
     const user = useContext(UserContext);

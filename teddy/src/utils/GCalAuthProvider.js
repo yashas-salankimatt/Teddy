@@ -10,6 +10,7 @@ function initAPI() {
       apiKey: "AIzaSyCdCXBfkNdvHTZHnex5rj2t4kROUX1vYy0",
       clientId: "112181817782-25lcd3tcchbucd8do9kq20d13q65ht7d.apps.googleusercontent.com",
       discoveryDocs: ['https://calendar-json.googleapis.com/$discovery/rest?version=v3'],
+      // scope: ['https://www.googleapis.com/auth/calendar.events', 'https://www.googleapis.com/auth/calendar']
       scope: 'https://www.googleapis.com/auth/calendar.events'
     });
     window.gapi.client.load('calendar', 'v3', () => {

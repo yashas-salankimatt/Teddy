@@ -4,12 +4,18 @@ import localizer from 'react-big-calendar/lib/localizers/moment';
 import moment from 'moment';
 import 'react-big-calendar/lib/sass/styles.scss';
 import './CalendarView.css';
-import { getEvents } from '../utils/CalendarWrapper';
+import { getEvents, getCalendarIds } from '../utils/CalendarWrapper';
 
 const momentLocalizer = localizer(moment);
 
 function CalendarView(props) {
     const [events, setEvents] = useState([]);
+    const calendarList = [
+        {id: 1, calendarId :"i59v4sa7k8cs3jgghsng9smbmc@group.calendar.google.com"},
+        // {calendarId :"0m10lko6fgtk8kodr5tm3nveeg@group.calendar.google.com"},
+        // {calendarId :"derekhe99@gmail.com"},
+        {id: 2, calendarId :'primary'},
+    ];
 
     useEffect(() => {
         console.log(events);
@@ -30,12 +36,23 @@ function CalendarView(props) {
                 });
                 setEvents(tempEvents);
             }}>Add event</button>
-            <button className='btn btn-secondary' onClick={async () => {
-                var tempEvents = await getEvents();
-                console.log(tempEvents);
-                if (tempEvents.length > 0){
-                    setEvents(tempEvents);
-                }
+            <button className='btn btn-secondary' onClick={() => {
+                calendarList.forEach(async (calendar) => {
+                    var tempEvents = getEvents(calendar.calendarId);
+                    tempEvents = await tempEvents;
+                    console.log(tempEvents);
+                    console.log(tempEvents.length);
+
+                    if (tempEvents.length > 0){
+                        // setEvents([...events, {tempEvents}]);
+                        setEvents(tempEvents);
+                    }
+                });
+                
+                // getEvents({calendarList, setEvents});
+                // tempEvents = await tempEvents;
+                // console.log(tempEvents);
+                // console.log(events);                
             }}>Populate Cal</button>
             <div className='ScrollView'>
                 <div>
