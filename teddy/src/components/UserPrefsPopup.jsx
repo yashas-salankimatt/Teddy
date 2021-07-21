@@ -11,6 +11,7 @@ function UserPrefsPopup({trigger=false, setTrig}) {
 
     const getPrefsData = async () => {
         const user = auth.currentUser;
+        
         if (user !== null){
             const prefRef = firestore.collection("users").doc(user.uid).collection("prefs");
             const workPrefsDoc = await prefRef.doc("workPrefs").get();

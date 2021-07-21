@@ -20,6 +20,26 @@ function CalendarView(props) {
 
     async function populate() {
         if (auth.currentUser !== null && window.gapi.client.calendar){
+
+        if(window.gapi.client.calendar){
+            var response = await window.gapi.client.calendar.calendarList.list({});
+            var tempCalendarItems = response.result.items;
+            var teddyCalExists = false;
+            tempCalendarItems.forEach((calendar)=>{
+                if(calendar.summary === `Teddy ${auth.currentUser.displayName}`){
+                teddyCalExists = true;
+                }
+            });
+            if(teddyCalExists === false) {
+                await window.gapi.client.calendar.calendars.insert({
+                "resource": {
+                    "summary": `Teddy ${auth.currentUser.displayName}`
+                }
+                })
+            }
+            }
+
+
             var tempEvents = await getEvents();
             // console.log(tempEvents);
             if (tempEvents.length > 0){

@@ -34,7 +34,11 @@ export const overallLogin = async () => {
 
   // await fb.auth().signInAndRetrieveDataWithCredential(credential);
   await fb.auth().signInWithCredential(credential);
+
+  
+  
   console.log("Done with login");
+
 };
 
 export const overallLogout = async () => {
