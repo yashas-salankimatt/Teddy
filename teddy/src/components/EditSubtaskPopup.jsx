@@ -9,6 +9,7 @@ function EditSubtaskPopup({trigger=false, subtaskData, setTrig, updateParentData
     const [minsNeeded, setMinsNeeded] = useState(0);
 
     useEffect(() => {
+        console.log(subtaskData);
         setSubtaskDocData(subtaskData.element);
         setName(subtaskData.element.subtaskName);
         setCompleted(subtaskData.element.completed);

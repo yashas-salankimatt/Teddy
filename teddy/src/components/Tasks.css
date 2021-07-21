@@ -20,6 +20,11 @@
     width: 100%;
 }
 
+.ProjectListItem.completed {
+    text-decoration: line-through;
+    text-decoration-thickness: 25%;
+}
+
 .EditButton {
     height: min-content;
     justify-content:end;

@@ -1,7 +1,7 @@
 .SubtaskItem {
     display: flex;
     flex-direction: row;
-    width:max-content;
+    width:100%;
     margin-top: 10px;
     margin-bottom: 10px;
     /* justify-content: center;
@@ -16,6 +16,7 @@
     list-style-image: url("../icons/arrow-right.svg");
     font-size:90%;
     font-weight: bold;
+    width: 100%;
 }
 
 .EditButton {

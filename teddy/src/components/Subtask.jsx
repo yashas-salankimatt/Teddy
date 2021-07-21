@@ -27,13 +27,17 @@ function Subtask({subtaskData, deleteSubtaskFunction}) {
     };
 
     return (
-        <div className='SubtaskItem'>
-            {subtaskDoc && <li className='SubtaskListItem' key={subtaskDoc.id}>
-                {subtaskName}
+        <div>
+            {subtaskDoc && <div className='SubtaskItem'>
+                <li className='SubtaskListItem' key={subtaskDoc.id}>
+                    <div className={'TaskListItem ' + (subtaskData.element.completed ? 'completed' : '')}>
+                        {subtaskName}
+                    </div>    
+                    <EditSubtaskPopup trigger={showEditSubtaskPopup} subtaskData={subtaskData} setTrig={setShowEditPopup} updateParentData={updateSubtaskData}></EditSubtaskPopup>
+                </li>
                 <button className='EditButton btn btn-secondary' onClick={() => {setShowEditPopup(true)}}>Edit</button>
                 <button className='DeleteButton btn btn-secondary' onClick={() => {deleteSubtaskFunction({subtaskID: subtaskDoc.id})}}>Delete</button>
-                <EditSubtaskPopup trigger={showEditSubtaskPopup} subtaskData={subtaskData} setTrig={setShowEditPopup} updateParentData={updateSubtaskData}></EditSubtaskPopup>
-            </li>}
+            </div>}
         </div>
     );
 }

@@ -12,14 +12,18 @@ function UserPrefsPopup({trigger=false, setTrig}) {
     const getPrefsData = async () => {
         const user = auth.currentUser;
         if (user !== null){
-            const prefRef = firestore.collection("users").doc(user.uid).collection("prefs");
-            const workPrefsDoc = await prefRef.doc("workPrefs").get();
-            const calendarPrefsDocs = await prefRef.doc("calendarPrefs").get();
-            setWorkDur(workPrefsDoc.data().prefDuration);
-            setWorkStart(workPrefsDoc.data().workStart);
-            setWorkEnd(workPrefsDoc.data().workEnd);
-            setCalendarIDs(calendarPrefsDocs.data().calendarIDs);
-            // console.log(workDur, workStart, workEnd, calendarIDs);
+            try{
+                const prefRef = firestore.collection("users").doc(user.uid).collection("prefs");
+                const workPrefsDoc = await prefRef.doc("workPrefs").get();
+                const calendarPrefsDocs = await prefRef.doc("calendarPrefs").get();
+                setWorkDur(workPrefsDoc.data().prefDuration);
+                setWorkStart(workPrefsDoc.data().workStart);
+                setWorkEnd(workPrefsDoc.data().workEnd);
+                setCalendarIDs(calendarPrefsDocs.data().calendarIDs);
+            } catch (error) {
+                console.log("Error when trying to get preferences from DB");
+                console.log(error);
+            }
             if (window.gapi.client.calendar){
                 var response = await window.gapi.client.calendar.calendarList.list({});
                 var tempCalendarItems = response.result.items;

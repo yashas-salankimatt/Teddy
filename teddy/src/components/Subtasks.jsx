@@ -106,27 +106,32 @@ function Subtasks({taskData, deleteTaskFunction}) {
     };
 
     return (
-        <div className='TaskItem'>
-            {taskDoc && <li className='TaskListItem' key={taskDoc.id}>
+        <div>
+            {taskDoc && <div className='TaskItem'>
                 <img className={"DropDownIcon " + (showChildren ? 'active' : '')} src={DropDownIcon} onClick={() => {setShowChildren(!showChildren)}} alt=">"/>
-                {taskName}
+                <div className='TaskListItem' key={taskDoc.id}>
+                    <div className={'TaskListItem ' + (taskData.element.completed ? 'completed' : '')}>
+                        {taskName}
+                    </div>
+                    {/* {taskName} */}
+                    <EditTaskPopup trigger={showEditTaskPopup} setTrig={setShowEditPopup} taskData={taskData} updateParentData={updateTaskData}></EditTaskPopup>
+                    {showChildren && <div>
+                        <div className='CreateSubtaskWrapper'>
+                            <CreateSubtaskPopup trigger={showCreateSubtaskPopup} setTrig={setCreateSubtaskPopup} updateParentData={createSubtaskFunc}></CreateSubtaskPopup>
+                            <h4 className='m-2'>Subtasks</h4>
+                            <button className='btn btn-secondary m-1' onClick={() => {setCreateSubtaskPopup(true)}}>Create Subtask</button>
+                        </div>
+                        <ul className='SubtasksList'>
+                            {subtasks.map((element) => (
+                                // <li key={element.subtaskID}>{element.subtaskName}</li>
+                                <Subtask subtaskData={{element}} deleteSubtaskFunction={deleteSubtaskState} key={element.subtaskID}></Subtask>
+                                ))}
+                        </ul>
+                    </div>}
+                </div>
                 <button className='EditButton btn btn-secondary' onClick={() => {setShowEditPopup(true)}}>Edit</button>
                 <button className='DeleteButton btn btn-secondary' onClick={() => {deleteTaskFunction({taskID: taskDoc.id})}}>Delete</button>
-                <EditTaskPopup trigger={showEditTaskPopup} setTrig={setShowEditPopup} taskData={taskData} updateParentData={updateTaskData}></EditTaskPopup>
-                {showChildren && <div>
-                    <div className='CreateSubtaskWrapper'>
-                        <CreateSubtaskPopup trigger={showCreateSubtaskPopup} setTrig={setCreateSubtaskPopup} updateParentData={createSubtaskFunc}></CreateSubtaskPopup>
-                        <h4 className='m-2'>Subtasks</h4>
-                        <button className='btn btn-secondary m-1' onClick={() => {setCreateSubtaskPopup(true)}}>Create Subtask</button>
-                    </div>
-                    <ul className='SubtasksList'>
-                        {subtasks.map((element) => (
-                            // <li key={element.subtaskID}>{element.subtaskName}</li>
-                            <Subtask subtaskData={{element}} deleteSubtaskFunction={deleteSubtaskState} key={element.subtaskID}></Subtask>
-                        ))}
-                    </ul>
-                </div>}
-            </li>}
+            </div>}
         </div>
     );
 }

@@ -10,7 +10,6 @@ function Tasks({projData, deleteProjFunction}) {
     const [tasks, setTasks] = useState([]);
     const [projDoc, setProjDoc] = useState(null);
     const [projectName, setProjName] = useState("");
-    // const [taskState, setTaskState] = useState([]);
     const [showChildren, setShowChildren] = useState(false);
     const [showEditProjPopup, setShowEditPopup] = useState(false);
     const [showCreateTaskPopup, setCreateTaskPopup] = useState(false);
@@ -120,7 +119,9 @@ function Tasks({projData, deleteProjFunction}) {
             {projDoc && <div className='ProjectItem'>
                 <img className={"DropDownIcon " + (showChildren ? 'active' : '')} src={DropDownIcon} onClick={() => {setShowChildren(!showChildren)}} alt=">"/>
                 <div className='ProjectListItem' key={projDoc.id}>
-                    {projectName}
+                    <div className={'ProjectListItem ' + (projData.element.completed ? 'completed' : '')}>
+                        {projectName}
+                    </div>
                     <EditProjectPopup trigger={showEditProjPopup} setTrig={setShowEditPopup} projData={projData} updateParentData={updateProjData}></EditProjectPopup>
                     {showChildren && <div>
                         <div className='CreateTaskWrapper'>

@@ -5,5 +5,10 @@
 }
 
 .ParentView {
-    height:87vh;
+    height:82vh;
+    /* should be 87 */
+}
+
+.CalendarStyle {
+    /* transform: scale(1,2); */
 }

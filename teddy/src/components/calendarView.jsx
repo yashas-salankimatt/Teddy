@@ -65,6 +65,8 @@ export function CalendarView(props) {
                         events={events}
                         defaultView='week'
                         views={['week', 'day', 'agenda']}
+                        className='CalendarStyle'
+                        // style={{transform: 'scale(1, 1.25)'}}
                     />
                 </div>
             </div>

@@ -1,0 +1,34 @@
+.ListViewItemWrapper {
+    display: flex;
+    flex-direction: row;
+    margin-top: 7.5px;
+    margin-bottom: 7.5px;
+    width: 100%;
+}
+
+.SubtaskText {
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.SubtaskText.completed {
+    text-decoration: line-through;
+    text-decoration-thickness: 20%;
+}
+
+/* TODO
+- Get this to go to the end, with rest of data
+*/
+.BubbleStyling {
+    /* justify-content: end;
+    justify-self: end;
+    justify-items: end;
+    align-items: flex-end;
+    align-self: flex-end;
+    align-content: flex-end; */
+    margin-left: 10px;
+    margin-right: 10px;
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 15px;
+}
