@@ -1,0 +1,18 @@
+.CreateCategoryWrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-content: center;
+    width: 100%;
+}
+
+.CategoriesList {
+    text-align: start;
+    width: 100%;
+}
+
+.ScrollView {
+    overflow: scroll;
+    height: 100%;
+    scroll-behavior: smooth;
+}

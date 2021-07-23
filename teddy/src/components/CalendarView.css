@@ -1,0 +1,9 @@
+.ScrollView {
+    overflow: scroll;
+    height: 100%;
+    scroll-behavior: smooth;
+}
+
+.ParentView {
+    height:87vh;
+}

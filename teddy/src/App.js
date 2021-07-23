@@ -1,24 +1,17 @@
-import './App.css'
-import Navbar from './components/Navbar.jsx'
-import BucketView from './components/BucketView'
-import CalendarView from './components/CalendarView'
-import { Button } from 'bootstrap'
+import './App.css';
+import MainPage from './pages/MainPage';
+import {BrowserRouter as Router, Route} from 'react-router-dom'
+import UserProvider from './providers/UserProvider';
 
 function App() {
   return (
-    <div className="App">
-      <div className="Navbar">
-        <Navbar></Navbar>
-      </div>
-      <div className="MainViewWrapper">
-        <div className="Buckets">
-          <BucketView></BucketView>
+    <UserProvider>
+      <Router>
+        <div className="App">
+          <Route path='/' exact component={MainPage}></Route>
         </div>
-        <div className="CalendarView">
-          <CalendarView></CalendarView>
-        </div>
-      </div>
-    </div>
+      </Router>
+    </UserProvider>
   );
 }
 

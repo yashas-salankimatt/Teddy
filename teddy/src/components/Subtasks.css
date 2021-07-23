@@ -1,4 +1,4 @@
-.SubtaskItem {
+.TaskItem {
     display: flex;
     flex-direction: row;
     width:max-content;
@@ -11,9 +11,10 @@
     outline-style:dashed; */
 }
 
-.SubtaskListItem {
+.TaskListItem {
     justify-content: end;
-    list-style-image: url("../icons/arrow-right.svg");
+    /* list-style-image: url("../icons/arrow-right.svg"); */
+    list-style: none;
     font-size:90%;
     font-weight: bold;
 }
@@ -32,4 +33,15 @@
     height: min-content;
     justify-content:end;
     /* align-self: flex-end; */
+}
+
+.CreateSubtaskWrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-content: center;
+}
+
+.SubtasksList {
+    text-align: start;
 }

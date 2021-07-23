@@ -1,43 +1,41 @@
-import React from 'react'
-import { FaTimes } from 'react-icons/fa'
-import { useState } from 'react'
-import EditSubtask from './EditSubtask'
-import Button from './Button'
+import React, {useEffect, useState} from 'react';
+import './Subtask.css';
+import EditSubtaskPopup from './EditSubtaskPopup';
 
-function Subtask({subtask, onDelete, onEdit}){
+function Subtask({subtaskData, deleteSubtaskFunction}) {
+    const [subtaskDoc, setSubtaskDoc] = useState(null);
+    const [subtaskName, setSubtaskName] = useState('');
 
-    const [showEditSubtask, setShowEditSubtask] = useState(false)
+    const [showEditSubtaskPopup, setShowEditPopup] = useState(false);
 
-    const [subtaskDone, setSubtaskDone] = useState({ labelChecked: false });
-    const labelRef = React.createRef();
+    useEffect(() => {
+        setSubtaskDoc(subtaskData.element.subtaskDoc);
+        setSubtaskName(subtaskData.element.subtaskName);
+    }, []);
 
-    const handleCheck = e => {
-        if (subtaskDone.labelChecked === false) {
-          labelRef.current.style.textDecoration = "line-through";
-        } else {
-          labelRef.current.style.textDecoration = "none";
-        }
-        setSubtaskDone({ labelChecked: !subtaskDone.labelChecked });
-    }
+    useEffect(() => {
+        setSubtaskDoc(subtaskData.element.subtaskDoc);
+        setSubtaskName(subtaskData.element.subtaskName);
+    }, [subtaskData]);
+
+    function updateSubtaskData ({newSubtaskData}) {
+        setSubtaskName(newSubtaskData.subtaskName);
+        subtaskData.element.subtaskName = newSubtaskData.subtaskName;
+        subtaskData.element.completed = newSubtaskData.completed;
+        subtaskData.element.description = newSubtaskData.description;
+        subtaskData.element.minutesNeeded = newSubtaskData.minutesNeeded;
+    };
 
     return (
-        <li>
-            <div className='subtask'>
-                <h3 ref={labelRef}>
-                    <input type='checkbox' onClick={handleCheck}/>
-                    {subtask.name}
-                    <FaTimes style = {{color: 'red', cursor: 'pointer',}} onClick={() => onDelete(subtask.id)}/>
-                </h3>
-                <p>
-                    {subtask.minutes} minutes
-                </p>
-                <Button color={showEditSubtask ? 'red' : 'green'} text={showEditSubtask ? 'Close' : 'Edit'} 
-                    onClick={() => setShowEditSubtask(!showEditSubtask)}/>
-                {showEditSubtask && <EditSubtask onEdit = {onEdit} subtask = {subtask}/>}
-
-            </div>
-        </li>
-    )
+        <div className='SubtaskItem'>
+            {subtaskDoc && <li className='SubtaskListItem' key={subtaskDoc.id}>
+                {subtaskName}
+                <button className='EditButton btn btn-secondary' onClick={() => {setShowEditPopup(true)}}>Edit</button>
+                <button className='DeleteButton btn btn-secondary' onClick={() => {deleteSubtaskFunction({subtaskID: subtaskDoc.id})}}>Delete</button>
+                <EditSubtaskPopup trigger={showEditSubtaskPopup} subtaskData={subtaskData} setTrig={setShowEditPopup} updateParentData={updateSubtaskData}></EditSubtaskPopup>
+            </li>}
+        </div>
+    );
 }
 
-export default Subtask
+export default Subtask;
