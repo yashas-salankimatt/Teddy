@@ -18,6 +18,8 @@ function CalendarView(props) {
     const [events, setEvents] = useState([]);
     const [previousEvents, setPreviousEvents] = useState([]);
     const [teddyCalendarId, setTeddyCalendarId] = useState([]);
+    const [googleEvents, setGoogleEvents] = useState([]);
+    // const [previousGoogleEvents, setPreviousGoogleEvents] = useState([]);
 
     async function populate() {
         if (auth.currentUser !== null && window.gapi.client.calendar){
@@ -59,6 +61,145 @@ function CalendarView(props) {
         // console.log(window.gapi.client.calendar);
         populate();
     }
+
+    async function fetchGoogleData() {
+        try {
+            var response = await window.gapi.client.calendar.events.list({
+                calendarId: teddyCalendarId,
+                timeMin: (new Date(new Date().setDate(new Date().getDate()-31))).toISOString(),
+                timeMax: (new Date(new Date().setDate(new Date().getDate()+31))).toISOString(),
+                singleEvents: true,
+                orderBy: 'startTime'
+            });
+            var snapshot = response.result.items;
+
+            var tempGoogleEvents = googleEvents.concat();
+            snapshot.forEach( async (element) => {
+                tempGoogleEvents.push({
+                    id: element.id,
+                    calendarId: teddyCalendarId,
+                    title: element.summary,
+                    start: new Date(element.start.dateTime),
+                    end: new Date(element.end.dateTime),
+                    datedoc: null
+                })
+            });
+            // setPreviousGoogleEvents(tempGoogleEvents);
+            setGoogleEvents(tempGoogleEvents);
+        } catch (error) {
+            console.log("Error in trying to get data from DB on mount");
+            console.log(error);
+        }
+    }
+
+    function updateGoogleEvents() {
+        // look through google events
+        googleEvents.forEach((googleEvent) => {
+            var isFound = false;
+            // see if firebase has event already
+            events.forEach(async (event) => {
+                // if found a match
+                if (googleEvent.id == event.id){
+                    isFound = true;
+                    if (!(googleEvent.summary == event.title && googleEvent.start == event.start && googleEvent.end == event.end)){
+                        console.log("Updating event");
+                        console.log(event.title)
+                        await window.gapi.client.calendar.events.update({
+                            "calendarId": teddyCalendarId,
+                            "id": eventId,
+                            "resource": {
+                                "end": {'dateTime': endTime},
+                                "start": {'dateTime':startTime},
+                                "summary": title
+                            }
+                          });
+                    }
+                }
+            });
+            // if firebase does not have the google event
+            if (!isFound) {
+                console.log("Adding event to firebase");
+                var datedoc = null;
+                if (!googleEvent.datedoc){
+                    console.log("Creating date document")
+                    var day = googleEvent.start.getDate();
+                    var month = googleEvent.start.getMonth() + 1;
+                    var year = googleEvent.start.getFullYear();
+                    var dateid = month + "-" + day + "-" + year
+                    datedoc = createDate({dateID: dateid, day: day, month: month, year: year})
+                } else {
+                    datedoc = googleEvent.datedoc;
+                }
+                console.log(datedoc);
+                const plannedRef = createPlanned({dateDoc: datedoc, eventName: googleEvent.summary, startTime: googleEvent.start, endTime: googleEvent.end});
+                const workingRef = createWorking({dateDoc: datedoc, eventName: googleEvent.summary, startTime: googleEvent.start, endTime: googleEvent.end});
+
+                var retID = null;
+                await getWorkingDoc({dateDoc: datedoc, eventName: googleEvent.title}).then((workingDoc) => {
+                    retID = workingDoc.id;
+                    console.log(retID);
+                });
+
+                console.log(workingRef);
+                console.log(retID);
+                console.log(datedoc);
+
+                const newEvent = {
+                    id: retID,
+                    title: googleEvent.title,
+                    start: googleEvent.start,
+                    end: googleEvent.end,
+                    datedoc: datedoc
+                }
+                console.log(newEvent);
+                const tempEvents = previousEvents.concat();
+                tempEvents.push(newEvent);
+                console.log(tempEvents);
+                setPreviousEvents(tempEvents);
+                setEvents(tempEvents);
+                console.log(previousEvents);
+                console.log(events);
+            }
+        });
+        // look through firebase events
+        events.forEach(async (event) => {
+            var isFound = false;
+            // look through google calendar events
+            googleEvents.forEach((googleEvent) => {
+                if (googleEvent.id == event.id){
+                    isFound = true;
+                }
+            });
+            // if firebase has event that google calendar does not
+            if (!isFound){
+                
+                console.log("Adding Event to google calendar");
+                
+                await window.gapi.client.calendar.events.insert({
+                    "calendarId": teddyCalendarId,
+                    "resource": {
+                        "end": {'dateTime': endTime},
+                        "start": {'dateTime':startTime},
+                        "id": eventId,
+                        "summary": title
+                    }
+                  });
+                
+            }
+        });
+    }
+    useEffect(() => {
+        setGoogleEvents([]);
+        fetchGoogleData();
+        updateGoogleEvents();
+
+    }, []);
+
+    useEffect(() => {
+        console.log(events);
+        fetchGoogleData();
+        updateGoogleEvents();
+    }, [events]);
 
     async function deleteGCal() {
         var existingEventsIds = [];
