@@ -62,6 +62,113 @@ function CalendarView(props) {
         populate();
     }
 
+
+    async function fetchData() {
+        const user = auth.currentUser;
+        try {
+            const snapshot = await firestore.collection("users").doc(user.uid).collection("calendar").get();
+            if (snapshot.empty){
+                console.log("No events for this user");
+                return;
+            }
+            var tempEvents = events.concat();
+            snapshot.forEach( async (date) => {
+                console.log(date)
+                const snapshot2 = await date.ref.collection("working").get();
+                snapshot2.forEach((event) => {
+                    tempEvents.push({
+                        id: event.id,
+                        title: event.data().eventName,
+                        start: event.data().startTime.toDate(),
+                        end: event.data().endTime.toDate(),
+                        datedoc: date.ref
+                    });
+                })
+            });
+            setPreviousEvents(tempEvents);
+            setEvents(tempEvents);
+            // setCatState(categories.map((cat) => cat.categoryID));
+            // console.log(categories);
+            // console.log(catState);
+        } catch (error) {
+            console.log("Error in trying to get data from DB on mount");
+            console.log(error);
+        }
+    }
+
+    function updateEvents() {
+        previousEvents.forEach((previousEvent) => {
+            var isFound = false;
+            events.forEach((event) => {
+                if (previousEvent.id == event.id){
+                    isFound = true;
+                    if (!(previousEvent.title == event.title && previousEvent.start == event.start && previousEvent.end == event.end)){
+                        console.log("Updating event");
+                        console.log(event.title)
+                        updatePlanned({event: event, eventName: event.title, dateDoc: event.datedoc});
+                        updateWorking({event: event, workingID: event.id, eventName: event.title, dateDoc: event.datedoc});
+                    }
+                }
+            });
+            if (!isFound) {
+                console.log("Deleting event");
+                deletePlanned({dateDoc: previousEvent.datedoc, eventName: previousEvent.title})
+                deleteWorking({dateDoc: previousEvent.datedoc, workingID: previousEvent.id, eventName: previousEvent.title})
+            }
+        });
+        events.forEach(async (event) => {
+            var isFound = false;
+            previousEvents.forEach((previousEvent) => {
+                if (previousEvent.id == event.id){
+                    isFound = true;
+                }
+            });
+            if (!isFound){
+                var datedoc = null;
+                if (!event.datedoc){
+                    console.log("Creating date document")
+                    var day = event.start.getDate();
+                    var month = event.start.getMonth() + 1;
+                    var year = event.start.getFullYear();
+                    var dateid = month + "-" + day + "-" + year
+                    datedoc = createDate({dateID: dateid, day: day, month: month, year: year})
+                } else {
+                    datedoc = event.datedoc
+                }
+                console.log(datedoc);
+                console.log("Adding Event");
+                
+                const plannedRef = createPlanned({dateDoc: datedoc, eventName: event.title, startTime: event.start, endTime: event.end})
+                const workingRef = createWorking({dateDoc: datedoc, eventName: event.title, startTime: event.start, endTime: event.end})
+                var retID = null;
+                await getWorkingDoc({dateDoc: datedoc, eventName: event.title}).then((workingDoc) => {
+                    retID = workingDoc.id;
+                    console.log(retID);
+                });
+
+                console.log(workingRef);
+                console.log(retID);
+                console.log(datedoc);
+
+                const newEvent = {
+                    id: retID,
+                    title: event.title,
+                    start: event.start,
+                    end: event.end,
+                    datedoc: datedoc
+                }
+                console.log(newEvent);
+                const tempEvents = previousEvents.concat();
+                tempEvents.push(newEvent);
+                console.log(tempEvents);
+                setPreviousEvents(tempEvents);
+                setEvents(tempEvents);
+                console.log(previousEvents);
+                console.log(events);
+            }
+        });
+    }
+
     async function fetchGoogleData() {
         try {
             var response = await window.gapi.client.calendar.events.list({
@@ -190,6 +297,7 @@ function CalendarView(props) {
     }
     useEffect(() => {
         setGoogleEvents([]);
+        fetchData();
         fetchGoogleData();
         updateGoogleEvents();
 
@@ -197,6 +305,7 @@ function CalendarView(props) {
 
     useEffect(() => {
         console.log(events);
+        updateEvents();
         fetchGoogleData();
         updateGoogleEvents();
     }, [events]);
