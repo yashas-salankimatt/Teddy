@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react';
 import {Calendar} from 'react-big-calendar';
 import localizer from 'react-big-calendar/lib/localizers/moment';
 import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
+import { createDate, createPlanned, createWorking, deletePlanned, deleteWorking, getWorkingDoc, updatePlanned, updateWorking } from "../utils/CalendarDBConfig";
 import moment from 'moment';
 import { auth, firestore } from '../utils/FirebaseConfig';
-// import { createDate, createPlanned, createWorking, deletePlanned, deleteWorking, updatePlanned, updateWorking } from "../utils/CalendarDBConfig";
 // import 'react-big-calendar/lib/sass/styles.scss';
 import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
 import "react-big-calendar/lib/css/react-big-calendar.css";
@@ -94,7 +94,7 @@ function CalendarView(props) {
 
     function updateGoogleEvents() {
         // look through google events
-        googleEvents.forEach((googleEvent) => {
+        googleEvents.forEach(async (googleEvent) => {
             var isFound = false;
             // see if firebase has event already
             events.forEach(async (event) => {
@@ -106,11 +106,11 @@ function CalendarView(props) {
                         console.log(event.title)
                         await window.gapi.client.calendar.events.update({
                             "calendarId": teddyCalendarId,
-                            "id": eventId,
+                            "id": event.id,
                             "resource": {
-                                "end": {'dateTime': endTime},
-                                "start": {'dateTime':startTime},
-                                "summary": title
+                                "end": {'dateTime': event.end.toISOString()},
+                                "start": {'dateTime':event.start.toISOString()},
+                                "summary": event.title
                             }
                           });
                     }
@@ -178,10 +178,10 @@ function CalendarView(props) {
                 await window.gapi.client.calendar.events.insert({
                     "calendarId": teddyCalendarId,
                     "resource": {
-                        "end": {'dateTime': endTime},
-                        "start": {'dateTime':startTime},
-                        "id": eventId,
-                        "summary": title
+                        "end": {'dateTime': event.end.toISOString()},
+                        "start": {'dateTime': event.start.toISOString()},
+                        "id": event.id,
+                        "summary": event.title
                     }
                   });
                 
