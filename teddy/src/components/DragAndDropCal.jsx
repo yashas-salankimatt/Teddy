@@ -17,6 +17,7 @@ const DnDCalendar = withDragAndDrop(Calendar);
 function CalendarView(props) {
     const [events, setEvents] = useState([]);
     const [previousEvents, setPreviousEvents] = useState([]);
+    const [teddyCalendarId, setTeddyCalendarId] = useState([]);
 
     async function populate() {
         if (auth.currentUser !== null && window.gapi.client.calendar){
@@ -28,8 +29,10 @@ function CalendarView(props) {
             tempCalendarItems.forEach((calendar)=>{
                 if(calendar.summary === `Teddy ${auth.currentUser.displayName}`){
                 teddyCalExists = true;
+                setTeddyCalendarId(calendar.id);
                 }
             });
+            
             if(teddyCalExists === false) {
                 await window.gapi.client.calendar.calendars.insert({
                 "resource": {
@@ -57,11 +60,68 @@ function CalendarView(props) {
         populate();
     }
 
+    async function deleteGCal() {
+        var existingEventsIds = [];
+
+        if (window.gapi.client.calendar){
+            var response = await window.gapi.client.calendar.events.list({
+                calendarId: teddyCalendarId,
+                timeMin: (new Date(new Date().setDate(new Date().getDate()-31))).toISOString(),
+                timeMax: (new Date(new Date().setDate(new Date().getDate()+31))).toISOString(),
+                singleEvents: true,
+                orderBy: 'startTime'
+            });
+
+            response.result.items.forEach(element => {
+                existingEventsIds.push(element.id);
+            });
+
+            console.log(existingEventsIds);
+
+            existingEventsIds.forEach(async (eventId) => {
+                await window.gapi.client.calendar.events.delete({
+                    "calendarId": teddyCalendarId,
+                    "eventId": eventId
+                    })
+            });
+            console.log('calendar delete working');
+        }
+    }
+
+    async function addGCal() {
+        if (window.gapi.client.calendar){
+            events.forEach(async (element) => {
+                const endTime = element.end.toISOString();
+                const startTime = element.start.toISOString();
+                const eventId = element.id;
+                const title = element.title;
+                console.log(endTime);
+                await window.gapi.client.calendar.events.insert({
+                    "calendarId": teddyCalendarId,
+                    "resource": {
+                        "end": {'dateTime': endTime},
+                        "start": {'dateTime':startTime},
+                        "id": eventId,
+                        "summary": title
+                    }
+                  });
+            });
+
+        }
+        console.log("done adding events");
+
+    }
+
     useEffect(() => {
         attemptPopulate();
+
+        deleteGCal();
+        addGCal();
     }, []);
 
     useEffect(() => {
+        deleteGCal();
+        addGCal();
         console.log(events);
     }, [events]);
 
@@ -105,7 +165,6 @@ function CalendarView(props) {
     }
 
     const eventStyleGetter = (event, start, end, isSelected) => {
-        console.log(event);
         var backgroundColor = event.hexColor;
         var style = {
             backgroundColor: backgroundColor,

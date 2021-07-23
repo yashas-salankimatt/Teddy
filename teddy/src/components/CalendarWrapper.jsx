@@ -16,8 +16,6 @@ export const getEvents = async () => {
 
     var colorResponse = await window.gapi.client.calendar.colors.get({});
     var tempColors = colorResponse.result.event;
-    console.log(colorResponse);
-    console.log(tempColors[1].background);
 
     for (let i = 0; i < calendarIDs.length; i++){
         var tempColor = null;
@@ -30,7 +28,6 @@ export const getEvents = async () => {
         });
         // console.log(response.result.items);
         response.result.items.forEach(element => {
-        console.log((element.colorId ? tempColors[element.colorId].background : tempColor));
 
         tempCalendarItems.forEach((calendar) => {
                 if (calendarIDs[i] === calendar.id){
@@ -38,9 +35,9 @@ export const getEvents = async () => {
                 }
             });
 
-        console.log(calendarIDs[i]);
             retEvents.push({
-                id: retEvents.length,
+                id: element.id,
+                calendarId: calendarIDs[i],
                 title: element.summary,
                 start: new Date(element.start.dateTime),
                 end: new Date(element.end.dateTime),
@@ -48,6 +45,5 @@ export const getEvents = async () => {
             });
         });
     }
-    console.log(retEvents);
     return retEvents;
   };
