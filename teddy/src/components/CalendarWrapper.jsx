@@ -47,3 +47,7 @@ export const getEvents = async () => {
     }
     return retEvents;
   };
+
+//   export const getGCalEvents = async () => {
+
+//   }

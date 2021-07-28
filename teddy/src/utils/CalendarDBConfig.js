@@ -76,6 +76,7 @@ export const getDateDoc = async ({dateID=null}) => {
         }
         const retRef = await snapshot.docs[0].ref;
         return retRef;
+
     } catch(error) {
         console.log("Error in trying to get date doc");
         console.log(error);
@@ -186,7 +187,7 @@ export const deletePlanned = async ({dateDoc, eventName=null, plannedID=null}) =
     try {
         dateDoc = await dateDoc;
         var retID = null;
-        getPlannedDoc({dateDoc, eventName, plannedID}).then((plannedDoc) => {
+        await getPlannedDoc({dateDoc, eventName, plannedID}).then((plannedDoc) => {
             retID = plannedDoc.id;
             plannedDoc.delete();
         });
@@ -202,7 +203,7 @@ export const deleteWorking = async ({dateDoc, eventName=null, workingID=null}) =
     try {
         dateDoc = await dateDoc;
         var retID = null;
-        getWorkingDoc({dateDoc, eventName, workingID}).then((workingDoc) => {
+        await getWorkingDoc({dateDoc, eventName, workingID}).then((workingDoc) => {
             retID = workingDoc.id;
             workingDoc.delete();
         });
@@ -218,7 +219,7 @@ export const updatePlanned = async ({dateDoc, eventName=null, plannedID=null, ev
     try {
         dateDoc = await dateDoc;
         var retID = null;
-        getPlannedDoc({dateDoc, eventName, plannedID}).then((plannedDoc) => {
+        await getPlannedDoc({dateDoc, eventName, plannedID}).then((plannedDoc) => {
             retID = plannedDoc.id;
             const updatePlannedData = {
                 eventName: event.title,
@@ -239,7 +240,7 @@ export const updateWorking = async ({dateDoc, eventName=null, workingID=null, ev
     try {
         dateDoc = await dateDoc;
         var retID = null;
-        getWorkingDoc({dateDoc, eventName, workingID}).then((workingDoc) => {
+        await getWorkingDoc({dateDoc, eventName, workingID}).then((workingDoc) => {
             retID = workingDoc.id;
             const updateWorkingData = {
                 eventName: event.title,
