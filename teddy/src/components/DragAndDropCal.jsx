@@ -17,7 +17,7 @@ const DnDCalendar = withDragAndDrop(Calendar);
 function CalendarView(props) {
     const [events, setEvents] = useState([]);
     const [previousEvents, setPreviousEvents] = useState([]);
-    const [teddyCalendarId, setTeddyCalendarId] = useState([]);
+    const [teddyCalendarId, setTeddyCalendarId] = useState('0j5ol3ke1pcrbq1s9b2kol7f40@group.calendar.google.com');
     const [googleEvents, setGoogleEvents] = useState([]);
     // const [previousGoogleEvents, setPreviousGoogleEvents] = useState([]);
 
@@ -42,9 +42,11 @@ function CalendarView(props) {
                 }
                 });
                 }
-            }
-            insertGoogleEvent();
+            console.log('running google insert function');
+            attemptGoogleInsert();
 
+            }
+            
             var tempEvents = await getEvents();
             // console.log(tempEvents);
             if (tempEvents.length > 0){
@@ -64,6 +66,15 @@ function CalendarView(props) {
         }
         // console.log(window.gapi.client.calendar);
         populate();
+    }
+
+    function attemptGoogleInsert() {
+        if (window.gapi.client.calendar === undefined){
+            setTimeout(attemptGoogleInsert, 500);
+            return;
+        }
+        // console.log(window.gapi.client.calendar);
+        insertGoogleEvent();
     }
 
     async function fetchData() {
@@ -229,7 +240,8 @@ function CalendarView(props) {
     useEffect(() => {
         console.log(googleEvents);
         if(googleEvents.length > 0){
-            deleteGoogleEvent();
+            console.log('deleting teddy events');
+            updateGoogleEvent();
         }
     }, [googleEvents]);
 
@@ -256,36 +268,29 @@ function CalendarView(props) {
     // after pressing populate cal second time, it works normally 
     // other times, this is not true
     async function insertGoogleEvent(){
-        if (window.gapi.client.calendar === undefined) {
-            console.log("calendar not defined");
-            setTimeout(insertGoogleEvent, 500);
-            return;
+        if (auth.currentUser !== null && window.gapi.client.calendar){
+            console.log('inserting google event');
+            var randInt = Math.floor(Math.random() * 5)
+            var randInt2 = Math.floor(Math.random() * 3) + 1;
+            var randInt3 = Math.floor(Math.random() * 100000) + 1;
+
+            var startTime = new Date(new Date().setHours(new Date().getHours() + randInt));
+            var endTime = new Date(new Date().setHours(new Date().getHours() + randInt + randInt2));
+            console.log(teddyCalendarId);
+
+            await window.gapi.client.calendar.events.insert({
+                "calendarId": teddyCalendarId,
+                "resource": {
+                    "end": {'dateTime': endTime.toISOString()},
+                    "start": {'dateTime': startTime.toISOString()},
+                    "id": randInt3,
+                    "summary": `sample event ${randInt3}`
+                }
+                });
         }
-        var randInt = Math.floor(Math.random() * 5)
-        var randInt2 = Math.floor(Math.random() * 3) + 1;
-        var randInt3 = Math.floor(Math.random() * 100000) + 1;
-
-        var startTime = new Date(new Date().setHours(new Date().getHours() + randInt));
-        var endTime = new Date(new Date().setHours(new Date().getHours() + randInt + randInt2));
-
-        await window.gapi.client.calendar.events.insert({
-            "calendarId": teddyCalendarId,
-            "resource": {
-                "end": {'dateTime': endTime.toISOString()},
-                "start": {'dateTime': startTime.toISOString()},
-                "id": randInt3,
-                "summary": `sample event ${randInt3}`
-            }
-            });
     }
 
     async function updateGoogleEvent(){
-
-        if (window.gapi.client.calendar === undefined) {
-            console.log("calendar not defined");
-            setTimeout(updateGoogleEvent, 500);
-            return;
-        }
         console.log("attempt update");
         var randInt = Math.floor(Math.random() * 5)
         var randInt2 = Math.floor(Math.random() * 3) + 1;
@@ -295,7 +300,7 @@ function CalendarView(props) {
 
         await window.gapi.client.calendar.events.update({
             "calendarId": teddyCalendarId,
-            "id": 37174,
+            "eventId": "66901",
             "resource": {
                 "end": {'dateTime': endTime.toISOString()},
                 "start": {'dateTime':startTime.toISOString()},
@@ -307,7 +312,7 @@ function CalendarView(props) {
     }
 
     async function deleteGoogleEvent(){
-        var deleteIndex = Math.floor(Math.random() * 10);
+        var deleteIndex = Math.floor(Math.random() * 5);
         console.log(googleEvents[deleteIndex].id)
         await window.gapi.client.calendar.events.delete({
             "calendarId": teddyCalendarId,
