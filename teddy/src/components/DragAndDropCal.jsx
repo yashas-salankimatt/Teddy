@@ -26,34 +26,40 @@ function CalendarView(props) {
     
     const getTeddyCalId = async () => {
         const calendarPrefsDocs = await prefRef.doc("calendarPrefs").get();
-        setTeddyCalendarId(calendarPrefsDocs.data().teddyCalendarId);
+        try{
+            setTeddyCalendarId(calendarPrefsDocs.data().teddyCalendarId);
+        }
+        catch(error){
+            console.log(error);
+            attemptPopulate();
+        }
     }
 
     // this code doesn't run correctly after just refreshing it
     async function populate() {
         if (auth.currentUser !== null && window.gapi.client.calendar){
-        if(window.gapi.client.calendar){
-            var response = await window.gapi.client.calendar.calendarList.list({});
-            var tempCalendarItems = response.result.items;
-            var teddyCalExists = false;
-            tempCalendarItems.forEach((calendar)=>{
-                if(calendar.summary === `Teddy ${auth.currentUser.displayName}`){
-                teddyCalExists = true;
-                setTeddyCalendarId(calendar.id);
-                prefRef.doc("calendarPrefs").update({
-                    teddyCalendarId
+            if(window.gapi.client.calendar){
+                var response = await window.gapi.client.calendar.calendarList.list({});
+                var tempCalendarItems = response.result.items;
+                var teddyCalExists = false;
+                tempCalendarItems.forEach((calendar)=>{
+                    if(calendar.summary === `Teddy ${auth.currentUser.displayName}`){
+                    teddyCalExists = true;
+                    setTeddyCalendarId(calendar.id);
+                    console.log(teddyCalendarId);
+                    prefRef.doc("calendarPrefs").update({
+                        teddyCalendarId
+                    });
+                    }
                 });
+                
+                if(teddyCalExists === false) {
+                    await window.gapi.client.calendar.calendars.insert({
+                    "resource": {
+                        "summary": `Teddy ${auth.currentUser.displayName}`
+                    }
+                    });
                 }
-            });
-            
-            if(teddyCalExists === false) {
-                await window.gapi.client.calendar.calendars.insert({
-                "resource": {
-                    "summary": `Teddy ${auth.currentUser.displayName}`
-                }
-                });
-                }
-
             }
             
             var tempEvents = await getEvents();
@@ -65,14 +71,14 @@ function CalendarView(props) {
             setGoogleEvents(teddyCalEvents)
             
         }
+        if (teddyCalendarId){
+            console.log('fetching google data');
+            fetchGoogleData(teddyCalendarId, setGoogleEvents);
+        }
     }
 
     function attemptPopulate() {
         if (window.gapi.client.calendar === undefined){
-            setTimeout(attemptPopulate, 500);
-            return;
-        }
-        if(teddyCalendarId.length===0){
             setTimeout(attemptPopulate, 500);
             return;
         }
@@ -203,7 +209,7 @@ function CalendarView(props) {
     }, []);
 
     useEffect(() => {
-        // console.log(events);
+        updateGoogleEvents(events, googleEvents, teddyCalendarId, setGoogleEvents);
         
         // updateEvents()
         if(googleEvents.length > 0){
@@ -217,7 +223,7 @@ function CalendarView(props) {
     }, [googleEvents]);
 
     useEffect(() =>{
-        if (teddyCalendarId.length>0){
+        if (teddyCalendarId){
             fetchGoogleData(teddyCalendarId, setGoogleEvents);
         }
     }, [teddyCalendarId])

@@ -111,15 +111,6 @@ export const updateGoogleEvents = async (events, googleEvents, teddyCalendarId, 
             });
             
             fetchGoogleData(teddyCalendarId, setGoogleEvents);
-
-            // console.log(newEvent);
-            // const tempEvents = previousEvents.concat();
-            // tempEvents.push(newEvent);
-            // console.log(tempEvents);
-            // setPreviousEvents(tempEvents);
-            // setEvents(tempEvents);
-            // console.log(previousEvents);
-            // console.log(events);
         }
     });  
 }
