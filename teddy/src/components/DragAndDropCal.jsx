@@ -15,11 +15,19 @@ const momentLocalizer = localizer(moment);
 const DnDCalendar = withDragAndDrop(Calendar);
 
 function CalendarView(props) {
+    const user = auth.currentUser;
+    const prefRef = firestore.collection("users").doc(user.uid).collection("prefs");
     const [events, setEvents] = useState([]);
     const [previousEvents, setPreviousEvents] = useState([]);
-    const [teddyCalendarId, setTeddyCalendarId] = useState('ad7tvcaofkp7cjp61p8iojp0m0@group.calendar.google.com');
+    // const [teddyCalendarId, setTeddyCalendarId] = useState(calendarPrefsDocs.data().teddyCalendarId);
+    const [teddyCalendarId, setTeddyCalendarId] = useState([]);
+
     const [googleEvents, setGoogleEvents] = useState([]);
-    // const [previousGoogleEvents, setPreviousGoogleEvents] = useState([]);
+    
+    const getTeddyCalId = async () => {
+        const calendarPrefsDocs = await prefRef.doc("calendarPrefs").get();
+        setTeddyCalendarId(calendarPrefsDocs.data().teddyCalendarId);
+    }
 
     // this code doesn't run correctly after just refreshing it
     async function populate() {
@@ -32,6 +40,9 @@ function CalendarView(props) {
                 if(calendar.summary === `Teddy ${auth.currentUser.displayName}`){
                 teddyCalExists = true;
                 setTeddyCalendarId(calendar.id);
+                prefRef.doc("calendarPrefs").update({
+                    teddyCalendarId
+                });
                 }
             });
             
@@ -42,12 +53,10 @@ function CalendarView(props) {
                 }
                 });
                 }
-            // attemptGoogleInsert(teddyCalendarId);
 
             }
             
             var tempEvents = await getEvents();
-            // console.log(tempEvents);
             if (tempEvents.length > 0){
                 setEvents(tempEvents);
             }
@@ -63,7 +72,10 @@ function CalendarView(props) {
             setTimeout(attemptPopulate, 500);
             return;
         }
-        // console.log(window.gapi.client.calendar);
+        if(teddyCalendarId.length===0){
+            setTimeout(attemptPopulate, 500);
+            return;
+        }
         populate();
     }
 
@@ -184,11 +196,10 @@ function CalendarView(props) {
 
     useEffect(() => {
         setEvents([]);
+        getTeddyCalId();
         attemptPopulate();
-        
         // fetchData();
         setGoogleEvents([]);
-        fetchGoogleData(teddyCalendarId, setGoogleEvents);
     }, []);
 
     useEffect(() => {
@@ -203,15 +214,13 @@ function CalendarView(props) {
     useEffect(() => {
         console.log(events);
         console.log(googleEvents);
-        // if(googleEvents.length > 0){
-        //     console.log('deleting teddy events');
-        //     updateGoogleEvent(teddyCalendarId);
-        // }
-        // if(googleEvents.length>0){
-        //     deleteTeddyGCalEvents(googleEvents, teddyCalendarId);
-        // }
     }, [googleEvents]);
 
+    useEffect(() =>{
+        if (teddyCalendarId.length>0){
+            fetchGoogleData(teddyCalendarId, setGoogleEvents);
+        }
+    }, [teddyCalendarId])
 
     const onEventResize = ({ event, start, end }) => {
         console.log({ event, start, end });
