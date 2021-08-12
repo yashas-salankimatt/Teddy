@@ -41,6 +41,7 @@ export const getEvents = async () => {
                 title: element.summary,
                 start: new Date(element.start.dateTime),
                 end: new Date(element.end.dateTime),
+                isTodo: false,
                 hexColor: (element.colorId ? tempColors[element.colorId].background : tempColor)
             });
         });
@@ -74,7 +75,7 @@ export const updateGoogleEvents = async (events, googleEvents, teddyCalendarId, 
             }
         });
         // if firebase has event that google calendar does not
-        if (!isFound){
+        if (!isFound && event.isTodo){
             
             console.log("Adding Event to google calendar");
             console.log(event.title);
@@ -135,14 +136,18 @@ export const fetchGoogleData = async(teddyCalendarId, setGoogleEvents) => {
 
             var tempGoogleEvents = [];
             snapshot.forEach( async (element) => {
-                tempGoogleEvents.push({
-                    id: element.id,
-                    calendarId: teddyCalendarId,
-                    title: element.summary,
-                    start: new Date(element.start.dateTime),
-                    end: new Date(element.end.dateTime),
-                    datedoc: null
-                })
+                if(element.isTodo){
+                    tempGoogleEvents.push({
+                        id: element.id,
+                        calendarId: teddyCalendarId,
+                        title: element.summary,
+                        start: new Date(element.start.dateTime),
+                        end: new Date(element.end.dateTime),
+                        datedoc: null
+                    })
+                }
+                    
+
             });
             setGoogleEvents(tempGoogleEvents);
         } catch (error) {

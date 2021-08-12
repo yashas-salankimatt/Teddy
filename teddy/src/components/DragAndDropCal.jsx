@@ -293,13 +293,17 @@ function CalendarView(props) {
                 var endTime = new Date(new Date().setHours(new Date().getHours() + randInt + randInt2));
                 var tempEvents = events.concat();
                 tempEvents.push({
+                    calendarId: teddyCalendarId,
                     title: 'Right Now - #' + randInt3,
                     start: startTime,
                     end: endTime,
+                    isTodo: true,
                     datedoc: null
                 });
                 setPreviousEvents(events);
                 setEvents(tempEvents);
+                console.log(events);
+                console.log("added event");
             }}>Add event</button>
             <button className='btn btn-secondary m-1' onClick={async () => {
                 populate();
