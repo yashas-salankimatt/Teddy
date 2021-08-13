@@ -119,14 +119,17 @@ function UserPrefsPopup({trigger=false, setTrig}) {
                 </div>
                 <h5 className='m-1'>Calendars to Import: </h5>
                 <div className='EditableField'>
-                    <ul>
-                        {calendars.map((calendar) => (
-                            <div key={calendar.id} className='EditableField'>
-                                <input className='form-check-input' type='checkbox' onChange={(event) => {handleChecked(event.target.checked, calendar.id)}} checked={calendar.checked}></input>
-                                <h6 style={{marginLeft:'5px'}}>{calendar.summary}</h6>
-                            </div>
-                        ))}
-                    </ul>
+                    <div className='CalendarList'>
+                        <ul>
+                            {calendars.map((calendar) => (
+                                <div key={calendar.id} className='EditableField'>
+                                    <input className='form-check-input' type='checkbox' onChange={(event) => {handleChecked(event.target.checked, calendar.id)}} checked={calendar.checked}></input>
+                                    <h6 style={{marginLeft:'5px'}}>{calendar.summary}</h6>
+                                </div>
+                            ))}
+                        </ul>
+                    </div>
+                    
                 </div>
                 <button className='btn btn-secondary' onClick={() => {updateDatabase()}}>Save Changes</button>
             </div>            

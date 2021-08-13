@@ -7,7 +7,6 @@
     height: 100vh;
     background-color: rgba(0,0,0,0.2);
     /* border-radius: 10%; */
-
     display: flex;
     justify-content: center;
     align-items: center;
@@ -15,7 +14,8 @@
 
 .popup-inner {
     border-radius: 20px;
-    position: relative;
+    position: sticky;
+    top: 0;
     padding: 32px;
     width: 100%;
     max-width: 640px;
@@ -34,4 +34,10 @@
     flex-direction: row;
     margin-top: 10px;
     margin-bottom: 10px;
+}
+
+.CalendarList {
+    list-style: none;
+    max-height:  50vh;
+    overflow: auto;
 }
