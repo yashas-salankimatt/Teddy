@@ -1,19 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-  <meta charset="utf-8" />
-  <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="theme-color" content="#000000" />
-  <meta name="description" content="Teddy Time Tracker" />
-  <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
-  <!--
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <meta name="description" content="Teddy Time Tracker" />
+    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+    <!--
       manifest.json provides metadata used when your web app is installed on a
       user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
     -->
-  <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-  <!--
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    <!--
       Notice the use of %PUBLIC_URL% in the tags above.
       It will be replaced with the URL of the `public` folder during the build.
       Only files inside the `public` folder can be referenced from the HTML.
@@ -22,13 +21,36 @@
       work correctly both with client-side routing and a non-root public URL.
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
-  <title>Teddy</title>
-</head>
+    <script
+      src="https://apis.google.com/js/api.js?onload=initAPI"
+      type="text/javascript"
+    ></script>
+    <!-- <script type='text/javascript'>
+    function initAPI() {
+      window.gapi.load('client', () => {
+        console.log('loaded client api')
+      
+        // right now, only asking for events access- might want to change scope to calendar instead of calendar.events later tho
+        window.gapi.client.init({
+          apiKey: "AIzaSyCdCXBfkNdvHTZHnex5rj2t4kROUX1vYy0",
+          clientId: "112181817782-25lcd3tcchbucd8do9kq20d13q65ht7d.apps.googleusercontent.com",
+          discoveryDocs: ['https://calendar-json.googleapis.com/$discovery/rest?version=v3'],
+          scope: 'https://www.googleapis.com/auth/calendar.events'
+        });
+        window.gapi.client.load('calendar', 'v3', () => {
+          console.log("loaded calendar api");
+        });
+        console.log("Done with init");
+      });
+    }
+  </script> -->
+    <title>Teddy</title>
+  </head>
 
-<body>
-  <noscript>You need to enable JavaScript to run this app.</noscript>
-  <div id="root"></div>
-  <!--
+  <body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root"></div>
+    <!--
       This HTML file is a template.
       If you open it directly in the browser, you will see an empty page.
 
@@ -38,6 +60,5 @@
       To begin the development, run `npm start` or `yarn start`.
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
-</body>
-
+  </body>
 </html>

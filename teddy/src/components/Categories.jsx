@@ -13,6 +13,9 @@ function Categories(props) {
     const [categories, setCategories] = useState([]);
     
     const createCat = async ({categoryName, archived=false}) => {
+        if (categoryName === null){
+            return;
+        }
         var catDoc = await createCategory({categoryName, archived});
         // console.log("created");
         catDoc = await catDoc;

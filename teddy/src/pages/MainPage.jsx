@@ -3,6 +3,8 @@ import './MainPage.css'
 import Navbar from '../components/Navbar';
 import BucketView from '../components/BucketView';
 import CalendarView from '../components/CalendarView';
+//import CalendarView from '../components/DragAndDropCal';
+
 import { UserContext } from '../providers/UserProvider';
 
 function MainPage(props) {

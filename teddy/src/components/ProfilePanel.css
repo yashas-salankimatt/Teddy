@@ -2,11 +2,20 @@
     display: flex;
     flex-direction: row;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-end;
 }
 
-.GeneralButton {
+.General {
     align-items: center;
     margin-left: 10px;
     margin-right: 10px;
+}
+
+
+/* TODO: Improve styling of photo */
+.ProfilePhoto {
+    max-height: 100%;
+    height: 2.5vmax;
+    align-items: center;
+    border-radius: 50%;
 }
