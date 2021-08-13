@@ -1,5 +1,6 @@
 import { auth, firestore } from "../utils/FirebaseConfig";
 
+//
 export const getEvents = async () => {
     var calendarIDs = [];
     const user = auth.currentUser;
@@ -28,8 +29,8 @@ export const getEvents = async () => {
         });
         // console.log(response.result.items);
         response.result.items.forEach(element => {
-
-        tempCalendarItems.forEach((calendar) => {
+            
+            tempCalendarItems.forEach((calendar) => {
                 if (calendarIDs[i] === calendar.id){
                     tempColor = calendar.backgroundColor;
                 }
@@ -46,7 +47,7 @@ export const getEvents = async () => {
             });
         });
     }
-    
+
     return retEvents;
   };
 
@@ -55,9 +56,9 @@ export const updateGoogleEvents = async (events, googleEvents, teddyCalendarId, 
         var isFound = false;
         // look through google calendar events
         googleEvents.forEach(async (googleEvent) => {
-            if (googleEvent.id == event.id){
+            if (googleEvent.id === event.id){
                 isFound = true;
-                if (!(googleEvent.title == event.title && googleEvent.start.getTime() == event.start.getTime() && googleEvent.end.getTime() == event.end.getTime())){
+                if (!(googleEvent.title === event.title && googleEvent.start.getTime() === event.start.getTime() && googleEvent.end.getTime() === event.end.getTime())){
                     console.log("Updating event");
                     console.log(event.title)
                     await window.gapi.client.calendar.events.update({
@@ -223,6 +224,7 @@ export const updateGoogleEvent = async (teddyCalendarId) => {
     console.log('updated event');
 };
 
+//TODO: Maybye don't randomly delete a Google Event. 
 export const deleteGoogleEvent = async (teddyCalendarId, googleEvents) => {
     var deleteIndex = Math.floor(Math.random() * 5);
     console.log(googleEvents[deleteIndex].id)
