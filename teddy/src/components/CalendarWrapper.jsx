@@ -46,9 +46,7 @@ export const getEvents = async () => {
             });
         });
     }
-
     
-
     return retEvents;
   };
 

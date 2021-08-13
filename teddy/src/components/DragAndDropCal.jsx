@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import {Calendar} from 'react-big-calendar';
 import localizer from 'react-big-calendar/lib/localizers/moment';
 import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
-import { createEvent, createPlanned, createWorking, deletePlanned, deleteWorking, getWorkingDoc, updatePlanned, updateWorking } from "../utils/CalendarDBConfig";
+import { createEvent, getEventDoc, deleteEvent, updateEvent} from "../utils/CalendarDBConfig";
 import moment from 'moment';
 import { auth, firestore } from '../utils/FirebaseConfig';
 // import 'react-big-calendar/lib/sass/styles.scss';
@@ -77,6 +77,7 @@ function CalendarView(props) {
         }
     }
 
+    //Modifier on Populate; only called on mount.
     function attemptPopulate() {
         if (window.gapi.client.calendar === undefined){
             setTimeout(attemptPopulate, 500);
@@ -85,7 +86,6 @@ function CalendarView(props) {
         populate();
     }
 
-    
 
     async function fetchData() {
         const user = auth.currentUser;
@@ -122,24 +122,23 @@ function CalendarView(props) {
         }
     }
 
+    //TODO: Document your functions, this fool isn't even called. 
     function updateEvents() {
         previousEvents.forEach((previousEvent) => {
             var isFound = false;
             events.forEach((event) => {
-                if (previousEvent.id == event.id){
+                if (previousEvent.id === event.id){
                     isFound = true;
                     if (!(previousEvent.title == event.title && previousEvent.start == event.start && previousEvent.end == event.end)){
                         console.log("Updating event");
-                        console.log(event.title)
-                        updatePlanned({event: event, eventName: event.title, dateDoc: event.datedoc});
-                        updateWorking({event: event, workingID: event.id, eventName: event.title, dateDoc: event.datedoc});
+                        console.log(event.title);
+                        updateEvent({event: event, eventName: event.title, eventID: event.id});
                     }
                 }
             });
             if (!isFound) {
                 console.log("Deleting event");
-                deletePlanned({dateDoc: previousEvent.datedoc, eventName: previousEvent.title})
-                deleteWorking({dateDoc: previousEvent.datedoc, workingID: previousEvent.id, eventName: previousEvent.title})
+                deleteEvent({eventName: previousEvent.title, eventID: previousEvent.id});
             }
         });
         events.forEach(async (event) => {
@@ -150,39 +149,20 @@ function CalendarView(props) {
                 }
             });
             if (!isFound){
-                var datedoc = null;
-                if (!event.datedoc){
-                    console.log("Creating date document")
-                    var day = event.start.getDate();
-                    var month = event.start.getMonth() + 1;
-                    var year = event.start.getFullYear();
-                    var dateid = month + "-" + day + "-" + year
-                    datedoc = createEvent({e: dateid, day: day, month: month, year: year})
-                } else {
-                    datedoc = event.datedoc
-                }
-                console.log(datedoc);
+                var retId = null;
                 console.log("Adding Event");
-                
-                const plannedRef = createPlanned({dateDoc: datedoc, eventName: event.title, startTime: event.start, endTime: event.end})
-                const workingRef = createWorking({dateDoc: datedoc, eventName: event.title, startTime: event.start, endTime: event.end})
-                var retID = null;
-                await getWorkingDoc({dateDoc: datedoc, eventName: event.title}).then((workingDoc) => {
-                    retID = workingDoc.id;
-                    console.log(retID);
+                await getEventDoc({eventID: event.id, eventName: event.title}).then((eventDoc) => {
+                    retId = event.id;
                 });
 
-                console.log(workingRef);
-                console.log(retID);
-                console.log(datedoc);
-
                 const newEvent = {
-                    id: retID,
+                    id: retId,
                     title: event.title,
                     start: event.start,
                     end: event.end,
-                    datedoc: datedoc
                 }
+
+                //update events with new event
                 console.log(newEvent);
                 const tempEvents = previousEvents.concat();
                 tempEvents.push(newEvent);
@@ -195,11 +175,7 @@ function CalendarView(props) {
         });
     }
 
-    
-    
-    
-    
-
+    // on mount, set Events, find the Teddy Calendar, try to populate the local calendar, and 
     useEffect(() => {
         setEvents([]);
         getTeddyCalId();
@@ -298,7 +274,6 @@ function CalendarView(props) {
                     start: startTime,
                     end: endTime,
                     isTodo: true,
-                    datedoc: null
                 });
                 setPreviousEvents(events);
                 setEvents(tempEvents);
