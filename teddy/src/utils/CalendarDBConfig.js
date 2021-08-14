@@ -42,7 +42,9 @@ export const getEventDoc = async ({ eventID = null, eventName = null }) => {
         .get();
     } else {
       var retDoc = await userRef.collection("calendar").doc(eventID);
+      console.log("The first retDoc: ", retDoc);
       retDoc = await retDoc;
+      console.log("The second retDoc: ", retDoc);
       return retDoc;
     }
     if (snapshot.empty) {

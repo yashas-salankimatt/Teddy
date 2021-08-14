@@ -1,6 +1,8 @@
 import { auth, firestore } from "../utils/FirebaseConfig";
 
-//
+/* Returns an array of events from the user's Google Calendar, 
+   per the user's preferences for which calendars to include.
+ */
 export const getEvents = async () => {
     var calendarIDs = [];
     const user = auth.currentUser;
@@ -10,6 +12,7 @@ export const getEvents = async () => {
         calendarIDs = calendarPrefsDocs.data().calendarIDs;
         console.log(calendarPrefsDocs.data().calendarIDs);
     }
+
     var retEvents = [];
 
     var calendarResponse = await window.gapi.client.calendar.calendarList.list({});
@@ -22,8 +25,8 @@ export const getEvents = async () => {
         var tempColor = null;
         var response = await window.gapi.client.calendar.events.list({
             calendarId: calendarIDs[i],
-            timeMin: (new Date(new Date().setDate(new Date().getDate()-31))).toISOString(),
-            timeMax: (new Date(new Date().setDate(new Date().getDate()+31))).toISOString(),
+            timeMin: (new Date(new Date().setDate(new Date().getDate()-7))).toISOString(),
+            timeMax: (new Date(new Date().setDate(new Date().getDate()+7))).toISOString(),
             singleEvents: true,
             orderBy: 'startTime'
         });
@@ -42,7 +45,7 @@ export const getEvents = async () => {
                 title: element.summary,
                 start: new Date(element.start.dateTime),
                 end: new Date(element.end.dateTime),
-                isTodo: false,
+                isTodo: false, //TODO: is it always false, or is it only false for non-Teddy events?
                 hexColor: (element.colorId ? tempColors[element.colorId].background : tempColor)
             });
         });
@@ -51,6 +54,7 @@ export const getEvents = async () => {
     return retEvents;
   };
 
+//takes in events array and a googleEvents array and updates the Google Calendar with changes to Events. 
 export const updateGoogleEvents = async (events, googleEvents, teddyCalendarId, setGoogleEvents) => {
     events.forEach(async (event) => {
         var isFound = false;
@@ -98,7 +102,7 @@ export const updateGoogleEvents = async (events, googleEvents, teddyCalendarId, 
         // see if firebase has event already
         events.forEach(async (event) => {
             // if found a match
-            if (googleEvent.id == event.id){
+            if (googleEvent.id === event.id){
                 isFound = true;
             }
         });
@@ -233,102 +237,3 @@ export const deleteGoogleEvent = async (teddyCalendarId, googleEvents) => {
         "eventId": googleEvents[deleteIndex].id
       })
 };
-
-    
-
-    // async function updateGoogleEvents(){
-    //     // look through google events
-    //     googleEvents.forEach(async (googleEvent) => {
-    //         console.log(googleEvent.id);
-    //         var isFound = false;
-    //         // see if firebase has event already
-    //         events.forEach(async (event) => {
-    //             // if found a match
-    //             if (googleEvent.id == event.id){
-    //                 isFound = true;
-    //                 console.log("Updating event");
-    //                 console.log(event.title)
-    //                 // await window.gapi.client.calendar.events.update({
-    //                 //     "calendarId": teddyCalendarId,
-    //                 //     "id": event.id,
-    //                 //     "resource": {
-    //                 //         "end": {'dateTime': event.end.toISOString()},
-    //                 //         "start": {'dateTime':event.start.toISOString()},
-    //                 //         "summary": "new event lmao"
-    //                 //     }
-    //                 //     });
-    //                 fetchGoogleData();
-    //             }
-    //         });
-    //         // // if firebase does not have the google event
-    //         // if (!isFound) {
-    //         //     console.log("Adding event to firebase");
-    //         //     var datedoc = null;
-    //         //     if (!googleEvent.datedoc){
-    //         //         console.log("Creating date document")
-    //         //         var day = googleEvent.start.getDate();
-    //         //         var month = googleEvent.start.getMonth() + 1;
-    //         //         var year = googleEvent.start.getFullYear();
-    //         //         var dateid = month + "-" + day + "-" + year
-    //         //         datedoc = createDate({dateID: dateid, day: day, month: month, year: year})
-    //         //     } else {
-    //         //         datedoc = googleEvent.datedoc;
-    //         //     }
-    //         //     console.log(datedoc);
-    //         //     const plannedRef = createPlanned({dateDoc: datedoc, eventName: googleEvent.summary, startTime: googleEvent.start, endTime: googleEvent.end});
-    //         //     const workingRef = createWorking({dateDoc: datedoc, eventName: googleEvent.summary, startTime: googleEvent.start, endTime: googleEvent.end});
-
-    //         //     var retID = null;
-    //         //     await getWorkingDoc({dateDoc: datedoc, eventName: googleEvent.title}).then((workingDoc) => {
-    //         //         retID = workingDoc.id;
-    //         //         console.log(retID);
-    //         //     });
-
-    //         //     console.log(workingRef);
-    //         //     console.log(retID);
-    //         //     console.log(datedoc);
-
-    //         //     const newEvent = {
-    //         //         id: retID,
-    //         //         title: googleEvent.title,
-    //         //         start: googleEvent.start,
-    //         //         end: googleEvent.end,
-    //         //         datedoc: datedoc
-    //         //     }
-    //         //     console.log(newEvent);
-    //         //     const tempEvents = previousEvents.concat();
-    //         //     tempEvents.push(newEvent);
-    //         //     console.log(tempEvents);
-    //         //     setPreviousEvents(tempEvents);
-    //         //     setEvents(tempEvents);
-    //         //     console.log(previousEvents);
-    //         //     console.log(events);
-    //         // }
-    //     });
-    //     // // look through firebase events
-    //     // events.forEach(async (event) => {
-    //     //     var isFound = false;
-    //     //     // look through google calendar events
-    //     //     googleEvents.forEach((googleEvent) => {
-    //     //         if (googleEvent.id == event.id){
-    //     //             isFound = true;
-    //     //         }
-    //     //     });
-    //     //     // if firebase has event that google calendar does not
-    //     //     if (!isFound){
-                
-    //     //         console.log("Adding Event to google calendar");
-                
-    //     //         await window.gapi.client.calendar.events.insert({
-    //     //             "calendarId": teddyCalendarId,
-    //     //             "resource": {
-    //     //                 "end": {'dateTime': event.end.toISOString()},
-    //     //                 "start": {'dateTime': event.start.toISOString()},
-    //     //                 "id": event.id,
-    //     //                 "summary": event.title
-    //     //             }
-    //     //           });
-                
-    //     //     }
-    //     // });
-    // }
