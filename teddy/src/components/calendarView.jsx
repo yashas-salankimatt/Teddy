@@ -2,23 +2,24 @@ import React, { useEffect, useState } from 'react';
 import {Calendar} from 'react-big-calendar';
 import localizer from 'react-big-calendar/lib/localizers/moment';
 import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
-import { createDate, createPlanned, createWorking, deletePlanned, deleteWorking, getWorkingDoc, updatePlanned, updateWorking } from "../utils/CalendarDBConfig";
 import moment from 'moment';
 import { auth, firestore } from '../utils/FirebaseConfig';
-// import 'react-big-calendar/lib/sass/styles.scss';
+import { createEvent, deleteEvent, getEventDoc, updateEvent } from "../utils/CalendarDBConfig";
+import { getEvents, insertGoogleEvent, attemptGoogleInsert, fetchGoogleData, updateGoogleEvent, deleteGoogleEvent, deleteTeddyGCalEvents, updateGoogleEvents } from './CalendarWrapper';
+
+//import 'react-big-calendar/lib/sass/styles.scss';
 import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import './CalendarView.css';
-import { getEvents, insertGoogleEvent, attemptGoogleInsert, fetchGoogleData, updateGoogleEvent, deleteGoogleEvent, deleteTeddyGCalEvents, updateGoogleEvents } from './CalendarWrapper';
 
 const momentLocalizer = localizer(moment);
 const DnDCalendar = withDragAndDrop(Calendar);
 
 function CalendarView(props) {
-    const user = auth.currentUser;
-    const prefRef = firestore.collection("users").doc(user.uid).collection("prefs");
     const [events, setEvents] = useState([]);
     const [previousEvents, setPreviousEvents] = useState([]);
+    const user = auth.currentUser;
+    const prefRef = firestore.collection("users").doc(user.uid).collection("prefs");
     // const [teddyCalendarId, setTeddyCalendarId] = useState(calendarPrefsDocs.data().teddyCalendarId);
     const [teddyCalendarId, setTeddyCalendarId] = useState([]);
 
@@ -86,7 +87,6 @@ function CalendarView(props) {
     }
 
     
-
     async function fetchData() {
         const user = auth.currentUser;
         try {
@@ -95,21 +95,18 @@ function CalendarView(props) {
                 console.log("No events for this user");
                 return;
             }
-            // var colorResponse = await window.gapi.client.calendar.colors.get({});
-            // var tempColors = colorResponse.result.event;
-
             var tempEvents = events.concat();
-            snapshot.forEach( async (date) => {
-                const snapshot2 = await date.ref.collection("working").get();
-                snapshot2.forEach((event) => {
-                    tempEvents.push({
-                        id: event.id,
-                        title: event.data().eventName,
-                        start: event.data().startTime.toDate(),
-                        end: event.data().endTime.toDate(),
-                        datedoc: date.ref
-                    });
-                })
+            snapshot.forEach( async (event) => {
+                console.log(event)
+                tempEvents.push({
+                    id: event.id,
+                    title: event.data().eventName,
+                    plannedstart: event.data().plannedStartTime.toDate(),
+                    plannedend: event.data().plannedEndTime.toDate(),
+                    start: event.data().workingStartTime.toDate(),
+                    end: event.data().workingEndTime.toDate(),
+
+                });
             });
             setPreviousEvents(tempEvents);
             setEvents(tempEvents);
@@ -123,23 +120,26 @@ function CalendarView(props) {
     }
 
     function updateEvents() {
+        const user = auth.currentUser;
         previousEvents.forEach((previousEvent) => {
             var isFound = false;
             events.forEach((event) => {
                 if (previousEvent.id == event.id){
                     isFound = true;
-                    if (!(previousEvent.title == event.title && previousEvent.start == event.start && previousEvent.end == event.end)){
+                    if (!(previousEvent.title == event.title 
+                        && previousEvent.plannedstart == event.plannedstart 
+                        && previousEvent.plannedend == event.plannedend
+                        && previousEvent.start == event.start 
+                        && previousEvent.end == event.end)){
                         console.log("Updating event");
                         console.log(event.title)
-                        updatePlanned({event: event, eventName: event.title, dateDoc: event.datedoc});
-                        updateWorking({event: event, workingID: event.id, eventName: event.title, dateDoc: event.datedoc});
+                        updateEvent({event: event, eventID: event.id, eventName: event.title});
                     }
                 }
             });
             if (!isFound) {
                 console.log("Deleting event");
-                deletePlanned({dateDoc: previousEvent.datedoc, eventName: previousEvent.title})
-                deleteWorking({dateDoc: previousEvent.datedoc, workingID: previousEvent.id, eventName: previousEvent.title})
+                deleteEvent({eventID: previousEvent.id, eventName: previousEvent.title})
             }
         });
         events.forEach(async (event) => {
@@ -150,38 +150,29 @@ function CalendarView(props) {
                 }
             });
             if (!isFound){
-                var datedoc = null;
-                if (!event.datedoc){
-                    console.log("Creating date document")
-                    var day = event.start.getDate();
-                    var month = event.start.getMonth() + 1;
-                    var year = event.start.getFullYear();
-                    var dateid = month + "-" + day + "-" + year
-                    datedoc = createDate({dateID: dateid, day: day, month: month, year: year})
-                } else {
-                    datedoc = event.datedoc
-                }
-                console.log(datedoc);
                 console.log("Adding Event");
                 
-                const plannedRef = createPlanned({dateDoc: datedoc, eventName: event.title, startTime: event.start, endTime: event.end})
-                const workingRef = createWorking({dateDoc: datedoc, eventName: event.title, startTime: event.start, endTime: event.end})
-                var retID = null;
-                await getWorkingDoc({dateDoc: datedoc, eventName: event.title}).then((workingDoc) => {
-                    retID = workingDoc.id;
-                    console.log(retID);
-                });
+                const eventID = await createEvent({eventName: event.title, plannedStartTime: event.plannedstart, plannedEndTime: event.plannedend, workingStartTime: event.start, workingEndTime: event.end})
+                // var retID = null;
+                // await getWorkingDoc({dateDoc: datedoc, eventName: event.title}).then((workingDoc) => {
+                //     retID = workingDoc.id;
+                //     console.log(retID);
+                // });
 
-                console.log(workingRef);
-                console.log(retID);
-                console.log(datedoc);
+                // console.log(workingRef);
+                // console.log(retID);
+                // console.log(datedoc);
+                console.log(eventID);
+
+                const snapshot = await firestore.collection("users").doc(user.uid).collection("calendar").get();
 
                 const newEvent = {
-                    id: retID,
+                    id: eventID,
                     title: event.title,
+                    plannedstart: event.plannedstart,
+                    plannedend: event.plannedend,
                     start: event.start,
                     end: event.end,
-                    datedoc: datedoc
                 }
                 console.log(newEvent);
                 const tempEvents = previousEvents.concat();
@@ -195,20 +186,18 @@ function CalendarView(props) {
         });
     }
 
-    
-    
-    
-    
 
     useEffect(() => {
         setEvents([]);
+        fetchData();
         getTeddyCalId();
         attemptPopulate();
-        // fetchData();
         setGoogleEvents([]);
     }, []);
 
     useEffect(() => {
+        updateEvents();
+
         updateGoogleEvents(events, googleEvents, teddyCalendarId, setGoogleEvents);
         
         // updateEvents()

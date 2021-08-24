@@ -37,8 +37,10 @@ export const getEvents = async () => {
 
             retEvents.push({
                 id: element.id,
-                calendarId: calendarIDs[i],
                 title: element.summary,
+                calendarId: calendarIDs[i],
+                plannedstart: new Date(element.start.dateTime),
+                plannedend: new Date(element.end.dateTime),
                 start: new Date(element.start.dateTime),
                 end: new Date(element.end.dateTime),
                 isTodo: false,
