@@ -60,9 +60,9 @@ function CalendarView(props) {
             }
             
             var tempEvents = await getEvents();
-            // if (tempEvents.length > 0){
-            //     setEvents(tempEvents);
-            // }
+            if (tempEvents.length > 0){
+                setEvents(tempEvents);
+            }
 
             var teddyCalEvents = tempEvents.filter(tempEvent => tempEvent.calendarId === teddyCalendarId);
             setGoogleEvents(teddyCalEvents)
