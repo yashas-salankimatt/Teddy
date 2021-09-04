@@ -136,16 +136,28 @@ export const fetchGoogleData = async(teddyCalendarId, setGoogleEvents) => {
 
             var tempGoogleEvents = [];
             snapshot.forEach( async (element) => {
-                if(element.isTodo){
-                    tempGoogleEvents.push({
-                        id: element.id,
-                        calendarId: teddyCalendarId,
-                        title: element.summary,
-                        start: new Date(element.start.dateTime),
-                        end: new Date(element.end.dateTime),
-                        datedoc: null
-                    })
-                }
+                // console.log(element.isTodo);
+                // if(element.isTodo){
+                //     console.log('temp google events created');
+                //     tempGoogleEvents.push({
+                //         id: element.id,
+                //         calendarId: teddyCalendarId,
+                //         title: element.summary,
+                //         start: new Date(element.start.dateTime),
+                //         end: new Date(element.end.dateTime),
+                //         datedoc: null
+                //     })
+                // }
+                
+                tempGoogleEvents.push({
+                    id: element.id,
+                    calendarId: teddyCalendarId,
+                    title: element.summary,
+                    start: new Date(element.start.dateTime),
+                    end: new Date(element.end.dateTime),
+                    datedoc: null
+                })
+                
                     
 
             });
