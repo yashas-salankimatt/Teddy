@@ -100,8 +100,6 @@ function CalendarView(props) {
                     // console.log(datedoc);
                     console.log(eventID);
 
-                    const snapshot = await firestore.collection("users").doc(user.uid).collection("calendar").get();
-
                     const newEvent = {
                         id: eventID,
                         title: event.title,
