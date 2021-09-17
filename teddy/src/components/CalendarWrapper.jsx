@@ -1,6 +1,8 @@
 import { auth, firestore } from "../utils/FirebaseConfig";
 
-export const getEvents = async () => {
+var events = [];
+
+export const updateEvents = async () => {
     var calendarIDs = [];
     const user = auth.currentUser;
     if (user !== null){
@@ -22,7 +24,7 @@ export const getEvents = async () => {
         response.result.items.forEach(element => {
         // console.log(element.summary);
             retEvents.push({
-                id: retEvents.length,
+                id: element.id,
                 title: element.summary,
                 start: new Date(element.start.dateTime),
                 end: new Date(element.end.dateTime),
@@ -30,5 +32,11 @@ export const getEvents = async () => {
         });
     }
     // console.log(retEvents);
+    events = retEvents;
     return retEvents;
-  };
+};
+
+export const getEvents = async () => {
+    events = await events;
+    return events;
+};

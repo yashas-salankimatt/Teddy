@@ -4,9 +4,9 @@ import localizer from 'react-big-calendar/lib/localizers/moment';
 import moment from 'moment';
 import 'react-big-calendar/lib/sass/styles.scss';
 import './CalendarView.css';
-import { getEvents } from './CalendarWrapper';
-import { auth, firestore } from '../utils/FirebaseConfig';
-import { initAPI } from '../utils/GCalAuthProvider';
+import { updateEvents } from './CalendarWrapper';
+import { auth } from '../utils/FirebaseConfig';
+import { basicScheduler2 } from '../providers/MasterDataProvider';
 
 const momentLocalizer = localizer(moment);
 
@@ -15,7 +15,7 @@ export function CalendarView(props) {
 
     async function populate() {
         if (auth.currentUser !== null && window.gapi.client.calendar){
-            var tempEvents = await getEvents();
+            var tempEvents = await updateEvents();
             // console.log(tempEvents);
             if (tempEvents.length > 0){
                 setEvents(tempEvents);
@@ -58,6 +58,14 @@ export function CalendarView(props) {
             <button className='btn btn-secondary m-1' onClick={async () => {
                 populate();
             }}>Populate Cal</button>
+            <button className='btn btn-secondary m-1' onClick={async () => {
+                var retArr = await basicScheduler2();
+                var tempEvents = events.concat(retArr);
+                setEvents(tempEvents);
+                console.log(retArr);
+            }}>
+                Create Plan
+            </button>
             <div className='ScrollView'>
                 <div>
                     <Calendar
@@ -66,7 +74,6 @@ export function CalendarView(props) {
                         defaultView='week'
                         views={['week', 'day', 'agenda']}
                         className='CalendarStyle'
-                        // style={{transform: 'scale(1, 1.25)'}}
                     />
                 </div>
             </div>

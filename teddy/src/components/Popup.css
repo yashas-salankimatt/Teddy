@@ -20,6 +20,8 @@
     width: 100%;
     max-width: 640px;
     background-color: #fff;
+
+    max-height: 100vh;
 }
 
 .popup-inner .close-btn {

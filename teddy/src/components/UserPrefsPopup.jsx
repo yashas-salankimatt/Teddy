@@ -121,7 +121,7 @@ function UserPrefsPopup({trigger=false, setTrig}) {
                     </form>
                 </div>
                 <h5 className='m-1'>Calendars to Import: </h5>
-                <div className='EditableField'>
+                <div className='EditableField' style={{overflow:'scroll', maxHeight:'50vh'}}>
                     <ul>
                         {calendars.map((calendar) => (
                             <div key={calendar.id} className='EditableField'>
@@ -129,10 +129,10 @@ function UserPrefsPopup({trigger=false, setTrig}) {
                                 <h6 style={{marginLeft:'5px'}}>{calendar.summary}</h6>
                             </div>
                         ))}
-                    </ul>
+                    </ul>    
                 </div>
                 <button className='btn btn-secondary' onClick={() => {updateDatabase()}}>Save Changes</button>
-            </div>            
+            </div>     
         </div>
     ) : "";
 }
