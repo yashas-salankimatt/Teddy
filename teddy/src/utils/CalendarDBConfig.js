@@ -2,17 +2,17 @@ import { auth, firestore } from "./FirebaseConfig";
 
 // ============================== creation methods ==========================
 
-export const createEvent = async ({eventName, plannedStartTime, plannedEndTime, workingStartTime, workingEndTime}) => {
+export const createEvent = async ({calendarId, eventName, plannedStartTime, plannedEndTime, workingStartTime, workingEndTime, isTodo, hexColor}) => {
     const user = auth.currentUser;
     try{
         const userRef = firestore.collection("users").doc(user.uid);
         const res = await userRef.collection("calendar").add({
-            eventName, plannedStartTime, plannedEndTime, workingStartTime, workingEndTime
+            calendarId, eventName, plannedStartTime, plannedEndTime, workingStartTime, workingEndTime, isTodo, hexColor
         });
         console.log(res.id);
         return res.id;
     } catch(error) {
-        console.log("Error in trying to create date");
+        console.log("Error in trying to create event");
         console.log(error);
     }
     return null;
@@ -72,11 +72,14 @@ export const updateEvent = async ({eventName=null, eventID=null, event}) => {
         getEventDoc({eventName, eventID}).then((eventDoc) => {
             retID = eventDoc.id;
             const updateEventData = {
+                calendarId: event.calendarId,
                 eventName: event.title,
                 plannedStartTime: event.plannedstart,
                 plannedEndTime: event.plannedend, 
                 workingStartTime: event.start,
-                workingEndTime: event.end
+                workingEndTime: event.end,
+                isTodo: event.isTodo,
+                hexColor: event.hexColor
             };
             eventDoc.update(updateEventData);
         });

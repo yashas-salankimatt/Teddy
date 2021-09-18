@@ -4,6 +4,7 @@ export const getEvents = async () => {
     var calendarIDs = [];
     const user = auth.currentUser;
     if (user !== null){
+        console.log("Getting Calendar ID's")
         const prefRef = firestore.collection("users").doc(user.uid).collection("prefs");
         const calendarPrefsDocs = await prefRef.doc("calendarPrefs").get();
         calendarIDs = calendarPrefsDocs.data().calendarIDs;
@@ -41,6 +42,8 @@ export const getEvents = async () => {
                 title: element.summary,
                 start: new Date(element.start.dateTime),
                 end: new Date(element.end.dateTime),
+                plannedstart: new Date(element.start.dateTime),
+                plannedend: new Date(element.end.dateTime),
                 isTodo: false,
                 hexColor: (element.colorId ? tempColors[element.colorId].background : tempColor)
             });
@@ -155,7 +158,6 @@ export const fetchGoogleData = async(teddyCalendarId, setGoogleEvents) => {
                     title: element.summary,
                     start: new Date(element.start.dateTime),
                     end: new Date(element.end.dateTime),
-                    datedoc: null
                 })
                 
                     

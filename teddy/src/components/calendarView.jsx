@@ -61,6 +61,7 @@ function CalendarView(props) {
             
             var tempEvents = await getEvents();
             if (tempEvents.length > 0){
+                console.log('Setting events');
                 setEvents(tempEvents);
             }
 
@@ -95,11 +96,14 @@ function CalendarView(props) {
                 console.log(event)
                 tempEvents.push({
                     id: event.id,
+                    calendarId: event.data.calendarId,
                     title: event.data().eventName,
                     plannedstart: event.data().plannedStartTime.toDate(),
                     plannedend: event.data().plannedEndTime.toDate(),
                     start: event.data().workingStartTime.toDate(),
                     end: event.data().workingEndTime.toDate(),
+                    isTodo: event.data().isTodo,
+                    hexColor: event.data().hexColor
                 });
             });
             setPreviousEvents(tempEvents);
@@ -124,7 +128,8 @@ function CalendarView(props) {
                         && previousEvent.plannedstart == event.plannedstart 
                         && previousEvent.plannedend == event.plannedend
                         && previousEvent.start == event.start 
-                        && previousEvent.end == event.end)){
+                        && previousEvent.end == event.end
+                        && previousEvent.calendarId == event.calendarId)){
                         console.log("Updating event");
                         console.log(event.title)
                         updateEvent({event: event, eventID: event.id, eventName: event.title});
@@ -146,16 +151,28 @@ function CalendarView(props) {
             if (!isFound){
                 console.log("Adding Event");
                 
-                const eventID = await createEvent({eventName: event.title, plannedStartTime: event.plannedstart, plannedEndTime: event.plannedend, workingStartTime: event.start, workingEndTime: event.end})
+                const eventID = await createEvent({
+                    calendarId: event.calendarId, 
+                    eventName: event.title, 
+                    plannedStartTime: event.plannedstart, 
+                    plannedEndTime: event.plannedend, 
+                    workingStartTime: event.start, 
+                    workingEndTime: event.end,
+                    isTodo: event.isTodo,
+                    hexColor: event.hexColor
+                })
                 console.log(eventID);
 
                 const newEvent = {
                     id: eventID,
+                    calendarId: event.calendarId, 
                     title: event.title,
                     plannedstart: event.plannedstart,
                     plannedend: event.plannedend,
                     start: event.start,
                     end: event.end,
+                    isTodo: event.isTodo,
+                    hexColor: event.hexColor
                 }
                 console.log(newEvent);
                 const tempEvents = previousEvents.concat();
@@ -190,7 +207,7 @@ function CalendarView(props) {
     }, [events]);
 
     useEffect(() => {
-        // console.log(events);
+        console.log(events);
         console.log('the google events: ');
         console.log(googleEvents);
     }, [googleEvents]);
@@ -203,6 +220,10 @@ function CalendarView(props) {
 
     const onEventResize = ({ event, start, end }) => {
         console.log({ event, start, end });
+
+        if (!event.isTodo){
+            return;
+        }
     
         const nextEvents = events.map(existingEvent => {
           return existingEvent.id == event.id
@@ -218,6 +239,10 @@ function CalendarView(props) {
     const onEventDrop = ({ event, start, end }) => {
 
         console.log({ event, start, end });
+
+        if (!event.isTodo){
+            return;
+        }
     
         const nextEvents = events.map(existingEvent => {
           return existingEvent.id == event.id
@@ -230,6 +255,10 @@ function CalendarView(props) {
     };
 
     const onSelectEvent = ({ event, start, end }) => {
+        if (!event.isTodo){
+            return;
+        }
+
         const remove = window.confirm("Would you like to remove this event?")
         if (remove === true){
             const nextEvents = [...events];
@@ -266,17 +295,20 @@ function CalendarView(props) {
                 var endTime = new Date(new Date().setHours(new Date().getHours() + randInt + randInt2));
                 var tempEvents = events.concat();
                 tempEvents.push({
+                    calendarId: teddyCalendarId,
                     title: 'Right Now - #' + randInt3,
                     plannedstart: startTime,
                     plannedend: endTime,
                     start: startTime,
                     end: endTime,
+                    isTodo: true,
+                    hexColor: <div id="FF0000"></div>
                 });
                 setPreviousEvents(events);
                 setEvents(tempEvents);
             }}>Add event</button>
             <button className='btn btn-secondary m-1' onClick={async () => {
-                populate();
+                attemptPopulate();
             }}>Populate Cal</button>
             <div className='ScrollView'>
                 <div>
